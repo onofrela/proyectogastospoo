@@ -1,0 +1,43 @@
+import java.util.Date;
+import java.io.Serializable;
+
+public abstract class Registro implements Serializable {
+    private Date fecha;
+    private String descripcion;
+    private double monto;
+
+    public Registro(Date fecha, String descripcion, double monto) {
+        this.fecha = fecha;
+        this.descripcion = descripcion;
+        this.monto = monto;
+    }
+
+    public Date getFecha() {
+        return fecha;
+    }
+
+    public void setFecha(Date fecha) {
+        this.fecha = fecha;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+
+    public double getMonto() {
+        return monto;
+    }
+
+    public void setMonto(double monto) {
+        this.monto = monto;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Registro{fecha=%s, descripcion='%s', monto=%.2f}", fecha, descripcion, monto);
+    }
+}
