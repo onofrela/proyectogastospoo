@@ -31,7 +31,12 @@ public class Transaccion extends Registro {
 
     @Override
     public String toString() {
-        return String.format("Transaccion{cuentaOrigen='%s', cuentaDestino='%s', %s}",
-                cuentaOrigen, cuentaDestino, super.toString());
+        
+        String linea = "Transacción:\n";
+        linea += "\tCuenta de origen: " + getCuentaOrigen() + "\n";
+        linea += "\tCuenta destino: " + getCuentaDestino() + "\n";
+        linea += super.toString();
+
+        return linea;
     }
 }

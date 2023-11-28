@@ -33,6 +33,8 @@ public class Cuenta implements Serializable {
 
     @Override
     public String toString() {
-        return String.format("Cuenta{nombre='%s', saldo=%.2f}", nombre, saldo);
+        String linea = "Cuenta " + getNombre() + "\n";
+        linea += "\tSaldo = $" + saldo;
+        return linea;
     }
 }

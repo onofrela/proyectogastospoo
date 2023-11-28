@@ -10,12 +10,12 @@ public class Balance {
     
         for (Cuenta cuenta : cuentas) {
             double saldoCuenta = cuenta.getSaldo();
-            System.out.println(cuenta.getNombre() + ": " + saldoCuenta);
+            System.out.println(cuenta.getNombre() + ": $" + saldoCuenta);
         }
     
         double balanceTotal = cuentas.stream().mapToDouble(Cuenta::getSaldo).sum();
     
         System.out.println("----- Balance Total -----");
-        System.out.println("Balance Total: " + balanceTotal);
+        System.out.println("Balance Total: $" + balanceTotal);
     }
 }

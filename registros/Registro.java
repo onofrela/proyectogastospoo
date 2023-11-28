@@ -39,6 +39,11 @@ public abstract class Registro implements Serializable {
 
     @Override
     public String toString() {
-        return String.format("Registro{fecha=%s, descripcion='%s', monto=%.2f}", fecha, descripcion, monto);
+        
+        String linea = "\tFecha: " + getFecha() + "\n";
+        linea += "\tMonto: " + getMonto() + "\n";
+        linea += "\tDescripción: " + getDescripcion() + "\n";
+
+        return linea;
     }
 }

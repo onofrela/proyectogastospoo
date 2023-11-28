@@ -31,6 +31,11 @@ public class Egreso extends Registro {
 
     @Override
     public String toString() {
-        return String.format("Egreso{categoria='%s', %s}", categoria, super.toString());
+
+        String linea = "Egreso:\n";
+        linea += "\tCategoría: " + getCategoria() + "\n";
+        linea += super.toString();
+
+        return linea;
     }
 }
