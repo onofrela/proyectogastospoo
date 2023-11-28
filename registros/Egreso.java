@@ -1,10 +1,13 @@
+package registros;
 import java.util.Date;
 
-public class Ingreso extends Registro {
+import cuentas.Cuenta;
+
+public class Egreso extends Registro {
     private String categoria;
     private Cuenta cuentaAsociada;
 
-    public Ingreso(Date fecha, String descripcion, double monto, String categoria, Cuenta cuentaAsociada) {
+    public Egreso(Date fecha, String descripcion, double monto, String categoria, Cuenta cuentaAsociada) {
         super(fecha, descripcion, monto);
         this.categoria = categoria;
         this.cuentaAsociada = cuentaAsociada;
@@ -28,6 +31,6 @@ public class Ingreso extends Registro {
 
     @Override
     public String toString() {
-        return String.format("Ingreso{categoria='%s', %s}", categoria, super.toString());
+        return String.format("Egreso{categoria='%s', %s}", categoria, super.toString());
     }
 }

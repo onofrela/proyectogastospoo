@@ -1,72 +1,25 @@
+package test;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
-import java.io.*;
 
+import cuentas.Cuenta;
+import registros.Egreso;
+import registros.Ingreso;
+import registros.Registro;
+import registros.Transaccion;
+import datos.ManejoArchivos;
 
 public class Menu {
     private static Scanner entrada = new Scanner(System.in);
     private static List<Registro> registros = new ArrayList<>();
     private static List<Cuenta> cuentas = new ArrayList<>();
-    private static final String ARCHIVO_CUENTAS = "cuentas.obj";
-    private static final String ARCHIVO_TRANSACCIONES = "transacciones.obj";
-
-    public static void guardarDatos() {
-        try (ObjectOutputStream cuentasOut = new ObjectOutputStream(new FileOutputStream(ARCHIVO_CUENTAS));
-             ObjectOutputStream transaccionesOut = new ObjectOutputStream(new FileOutputStream(ARCHIVO_TRANSACCIONES))) {
-
-            cuentasOut.writeObject(cuentas);
-            transaccionesOut.writeObject(registros);
-
-        } catch (IOException e) {
-            System.out.println("Error al guardar datos: " + e.getMessage());
-        }
-    }
-
-    public static void cargarDatos() {
-        try (ObjectInputStream cuentasIn = new ObjectInputStream(new FileInputStream(ARCHIVO_CUENTAS));
-             ObjectInputStream transaccionesIn = new ObjectInputStream(new FileInputStream(ARCHIVO_TRANSACCIONES))) {
-    
-            cuentas = (List<Cuenta>) cuentasIn.readObject();
-            registros = (List<Registro>) transaccionesIn.readObject();
-    
-           // Antes de actualizar saldos, restablecer los saldos a su estado inicial
-            for (Cuenta cuenta : cuentas) {
-                cuenta.setSaldo(0);
-            }
-
-            // Actualizar saldos de cuentas
-            for (Registro registro : registros) {
-                if (registro instanceof Transaccion) {
-                    Transaccion transferencia = (Transaccion) registro;
-                    String cuentaOrigenNombre = transferencia.getCuentaOrigen().getNombre();
-                    String cuentaDestinoNombre = transferencia.getCuentaDestino().getNombre();
-
-                    for (Cuenta cuenta : cuentas) {
-                        if (cuenta.getNombre().equals(cuentaOrigenNombre)) {
-                            cuenta.actualizarBalance(-transferencia.getMonto());
-                        }
-
-                        if (cuenta.getNombre().equals(cuentaDestinoNombre)) {
-                            cuenta.actualizarBalance(transferencia.getMonto());
-                        }
-                    }
-                }
-            }
-    
-        } catch (FileNotFoundException e) {
-            System.out.println("No se encontraron archivos de datos existentes.");
-        } catch (IOException | ClassNotFoundException e) {
-            System.out.println("Error al cargar datos: " + e.getMessage());
-        }
-    }    
-
     public static void Principal() {
         int opcion;
-
+        ManejoArchivos.cargarDatos(registros, cuentas);
         do {
-            mostrarBalances();
+            Balance.mostrarBalances(cuentas);
             System.out.println("----- Menú Principal -----");
             System.out.println("1. Ver Transacciones");
             System.out.println("2. Gestionar Cuentas");
@@ -104,6 +57,7 @@ public class Menu {
 
         } while (opcion != 6);
 
+        ManejoArchivos.guardarDatos(registros, cuentas);
         entrada.close();
     }
 
@@ -326,20 +280,6 @@ public class Menu {
             }
 
         } while (opcion != 3);
-    }
-
-    private static void mostrarBalances() {
-        System.out.println("----- Balances de Cuentas -----");
-    
-        for (Cuenta cuenta : cuentas) {
-            double saldoCuenta = cuenta.getSaldo();
-            System.out.println(cuenta.getNombre() + ": " + saldoCuenta);
-        }
-    
-        double balanceTotal = cuentas.stream().mapToDouble(Cuenta::getSaldo).sum();
-    
-        System.out.println("----- Balance Total -----");
-        System.out.println("Balance Total: " + balanceTotal);
     }
     
 }

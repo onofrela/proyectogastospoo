@@ -1,3 +1,4 @@
+package cuentas;
 import java.io.Serializable;
 
 public class Cuenta implements Serializable {

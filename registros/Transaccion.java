@@ -1,4 +1,7 @@
+package registros;
 import java.util.Date;
+
+import cuentas.Cuenta;
 
 public class Transaccion extends Registro {
     private Cuenta cuentaOrigen;
