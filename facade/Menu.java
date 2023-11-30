@@ -6,7 +6,6 @@ import java.util.Scanner;
 import categoria.Categoria;
 import cuentas.Cuenta;
 import registros.Registro;
-import test.Balance;
 import datos.ManejoArchivos;
 
 public class Menu {

@@ -8,8 +8,9 @@ import java.util.List;
 import categoria.Categoria;
 
 public class ManejoArchivos {
+    private static String directorio = "datos/datos_registros.ser";
     public static void guardarDatos(List<Registro> registros, List<Cuenta> cuentas, List<Categoria> categorias) {
-        try (FileOutputStream fileOut = new FileOutputStream("datos/datos_registros.ser");
+        try (FileOutputStream fileOut = new FileOutputStream(directorio);
              ObjectOutputStream objectOut = new ObjectOutputStream(fileOut)) {
 
             objectOut.writeObject(registros);
@@ -22,8 +23,9 @@ public class ManejoArchivos {
         }
     }
 
+    @SuppressWarnings("unchecked") //Para quitar la advertencia de addAll
     public static void cargarDatos(List<Registro> registros, List<Cuenta> cuentas, List<Categoria> categorias) {
-        try (FileInputStream fileIn = new FileInputStream("datos/datos_registros.ser");
+        try (FileInputStream fileIn = new FileInputStream(directorio);
              ObjectInputStream objectIn = new ObjectInputStream(fileIn)) {
 
             registros.addAll((List<Registro>) objectIn.readObject());

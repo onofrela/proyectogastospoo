@@ -1,4 +1,4 @@
-package facade;
+package test.facade;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -174,6 +174,8 @@ public class GestorRegistros {
                 
                             Transaccion transferencia = new Transaccion(fecha, descripcion, monto, cuentaOrigen, cuentaDestino);
                             registros.add(transferencia);
+                            cuentas.add(cuentaOrigen);
+                            cuentas.add(cuentaDestino);
                 
                             cuentaOrigen.actualizarBalance(-monto);
                             cuentaDestino.actualizarBalance(monto);
