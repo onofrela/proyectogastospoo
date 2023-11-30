@@ -1,4 +1,4 @@
-import test.Menu;
+import facade.Menu;
 
 public class App {
     public static void main(String[] args) {
