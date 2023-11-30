@@ -2,12 +2,13 @@ package registros;
 import java.util.Date;
 
 import cuentas.Cuenta;
+import categoria.Categoria;
 
 public class Ingreso extends Registro {
-    private String categoria;
+    private Categoria categoria;
     private Cuenta cuentaAsociada;
 
-    public Ingreso(Date fecha, String descripcion, double monto, String categoria, Cuenta cuentaAsociada) {
+    public Ingreso(Date fecha, String descripcion, double monto, Categoria categoria, Cuenta cuentaAsociada) {
         super(fecha, descripcion, monto);
         this.categoria = categoria;
         this.cuentaAsociada = cuentaAsociada;
@@ -21,11 +22,11 @@ public class Ingreso extends Registro {
         this.cuentaAsociada = cuentaAsociada;
     }
 
-    public String getCategoria() {
+    public Categoria getCategoria() {
         return categoria;
     }
 
-    public void setCategoria(String categoria) {
+    public void setCategoria(Categoria categoria) {
         this.categoria = categoria;
     }
 
