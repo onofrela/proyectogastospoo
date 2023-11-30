@@ -108,7 +108,7 @@ public class GestorCategorias {
         System.out.println("Categoría eliminada con éxito.");
     }
 
-    public void enlistarCategorias(){
+    public void listarCategorias(){
         for (int i = 0; i < categorias.size(); i++) {
             System.out.println((i + 1) + ". " + categorias.get(i).getNombre());
         }
@@ -121,7 +121,7 @@ public class GestorCategorias {
         }
     
         System.out.println("Categorías disponibles:");
-        this.enlistarCategorias();
+        this.listarCategorias();
     
         System.out.print("Seleccione una categoría (0 para Sin Categoría): ");
         int opcionCategoria = entrada.nextInt();

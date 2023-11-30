@@ -109,11 +109,11 @@ public class GestorRegistros {
 
     public void agregarRegistro() {
         Categoria categoria;
-        System.out.println("----- Agregar Transacción -----");
+        System.out.println("----- Agregar Registro -----");
         if (cuentas.isEmpty()) {
             System.out.println("Error: No existen cuentas. Por favor, primero agrega una cuenta.");
         } else {
-            System.out.print("Seleccione el tipo de transacción (1. Ingreso / 2. Egreso / 3. Transferencia): ");
+            System.out.print("Seleccione el tipo de registro (1. Ingreso / 2. Egreso / 3. Transferencia): ");
             int tipoTransaccion = entrada.nextInt();
             entrada.nextLine();  // Limpiar el buffer de entrada
 
@@ -174,8 +174,6 @@ public class GestorRegistros {
                 
                             Transaccion transferencia = new Transaccion(fecha, descripcion, monto, cuentaOrigen, cuentaDestino);
                             registros.add(transferencia);
-                            cuentas.add(cuentaOrigen);
-                            cuentas.add(cuentaDestino);
                 
                             cuentaOrigen.actualizarBalance(-monto);
                             cuentaDestino.actualizarBalance(monto);
@@ -187,11 +185,11 @@ public class GestorRegistros {
                     }
                     break;                
                 default:
-                    System.out.println("Tipo de transacción no válido.");
+                    System.out.println("Tipo de registro no válido.");
                     break;
             }
 
-            System.out.println("Transacción agregada con éxito.");
+            System.out.println("Registro agregado con éxito.");
         }
     }
 

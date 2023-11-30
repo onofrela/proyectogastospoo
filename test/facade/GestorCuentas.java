@@ -42,4 +42,13 @@ public class GestorCuentas {
 
         System.out.println("Cuenta agregada con éxito.");
     }
+
+    public void editarCuenta() {
+        // Lógica para editar una cuenta
+    }
+
+    public void eliminarCuenta() {
+        // Lógica para eliminar una cuenta
+    }
+
 }
