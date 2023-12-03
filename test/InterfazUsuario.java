@@ -15,7 +15,7 @@ public class InterfazUsuario {
     }
     private void initialize() {
         ventana = new JFrame("Menú Principal");
-        ventana.setSize(400, 300);
+        ventana.setSize(800, 600); // Establece el tamaño predeterminado de la ventana principal
         ventana.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     
         panel = new JPanel();

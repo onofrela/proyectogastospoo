@@ -1,13 +1,10 @@
 package test.facade;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
+import javax.swing.*;
 
 import categoria.Categoria;
 import cuentas.Cuenta;
@@ -43,12 +40,18 @@ public class Menu {
     
     public void mostrarMenuPrincipal() {
         panel.removeAll();
-        panel.repaint();
+        panel.setLayout(new GridLayout(0, 2));
 
-        lblBalance = new JLabel("Balance: ");
-        lblBalance.setBounds(20, 20, 200, 30);
+        // Genera el texto con saltos de línea utilizando Balance.obtenerBalances(cuentas)
+        String balancesText = Balance.obtenerBalances(cuentas);
+
+        // Formatea el texto para mostrar saltos de línea usando HTML
+        balancesText = "<html>" + balancesText.replace("\n", "<br>") + "</html>";
+
+        // Establece el texto formateado en el JLabel
+        lblBalance = new JLabel(balancesText);
+        lblBalance.setBounds(20, 20, 400, 200); // Ajusta el tamaño y posición según sea necesario
         panel.add(lblBalance);
-        Balance.mostrarBalances(cuentas);
 
         btnTransacciones = new JButton("Ver Registros");
         btnTransacciones.setBounds(20, 60, 200, 30);
@@ -87,6 +90,7 @@ public class Menu {
         btnSalir.addActionListener(e -> salirDelPrograma());
 
         panel.revalidate();
+        panel.repaint();
     }
 
     public JButton crearBotonVolverMenuPrincipal() {

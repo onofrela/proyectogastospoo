@@ -5,21 +5,25 @@ import cuentas.Cuenta;
 
 public class Balance {
     
-    public static void mostrarBalances(List<Cuenta> cuentas) {
-        if(!cuentas.isEmpty()){
-            System.out.println("----- Balances de Cuentas -----");
+    public static String obtenerBalances(List<Cuenta> cuentas) {
+        StringBuilder balances = new StringBuilder();
+        
+        if (!cuentas.isEmpty()) {
+            balances.append("----- Balances de Cuentas -----\n");
         
             for (Cuenta cuenta : cuentas) {
                 double saldoCuenta = cuenta.getSaldo();
-                System.out.println(cuenta.getNombre() + ": $" + saldoCuenta);
+                balances.append(cuenta.getNombre()).append(": $").append(saldoCuenta).append("\n");
             }
         
             double balanceTotal = cuentas.stream().mapToDouble(Cuenta::getSaldo).sum();
         
-            System.out.println("----- Balance Total -----");
-            System.out.println("Balance Total: $" + balanceTotal);
-        }else {
-            System.out.println("Sin cuentas");
+            balances.append("----- Balance Total -----\n");
+            balances.append("Balance Total: $").append(balanceTotal).append("\n");
+        } else {
+            balances.append("Sin cuentas\n");
         }
+        
+        return balances.toString();
     }
 }
