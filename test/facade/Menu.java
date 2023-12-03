@@ -1,6 +1,7 @@
 package test.facade;
 
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,10 +11,9 @@ import categoria.Categoria;
 import cuentas.Cuenta;
 import datos.ManejoArchivos;
 import registros.Registro;
+import test.facade.componentes.TopBar;
 
 public class Menu {
-
-    public JButton btnTransacciones, btnCuentas, btnCategorias, btnAgregar, btnReportes, btnConfiguracion, btnSalir;
     public JLabel lblBalance;
     public JPanel panel;
     public JFrame ventana;
@@ -26,210 +26,126 @@ public class Menu {
     private static GestorCategorias gestorCategorias;
     private static GestorRegistros gestorRegistros;
 
+    private Balance balance;
+
     public Menu(JFrame ventana, JPanel panel){
         this.ventana = ventana;
         this.panel = panel;
+        this.balance = new Balance(cuentas);
 
         ManejoArchivos.cargarDatos(registros, cuentas, categorias);
         
-        gestorCuentas = new GestorCuentas(cuentas);
+        gestorCuentas = new GestorCuentas(cuentas, e -> mostrarMenuCuentas(), panel);
         gestorCategorias = new GestorCategorias(categorias);
         gestorRegistros = new GestorRegistros(cuentas, registros, gestorCategorias, gestorCuentas);
 
     }
+
+    public JButton generarBoton(String texto, ActionListener listener, JPanel panel) {
+        JButton boton = new JButton(texto);
+        boton.addActionListener(listener);
+        boton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        boton.setAlignmentY(Component.CENTER_ALIGNMENT);
+        panel.add(boton);
+        return boton;
+    }
     
     public void mostrarMenuPrincipal() {
         panel.removeAll();
-        panel.setLayout(new GridLayout(0, 2));
-
-        // Genera el texto con saltos de línea utilizando Balance.obtenerBalances(cuentas)
-        String balancesText = Balance.obtenerBalances(cuentas);
-
-        // Formatea el texto para mostrar saltos de línea usando HTML
-        balancesText = "<html>" + balancesText.replace("\n", "<br>") + "</html>";
-
-        // Establece el texto formateado en el JLabel
-        lblBalance = new JLabel(balancesText);
-        lblBalance.setBounds(20, 20, 400, 200); // Ajusta el tamaño y posición según sea necesario
-        panel.add(lblBalance);
-
-        btnTransacciones = new JButton("Ver Registros");
-        btnTransacciones.setBounds(20, 60, 200, 30);
-        panel.add(btnTransacciones);
-
-        btnCuentas = new JButton("Gestionar Cuentas");
-        btnCuentas.setBounds(20, 100, 200, 30);
-        panel.add(btnCuentas);
-
-        btnCategorias = new JButton("Gestionar Categorías");
-        btnCategorias.setBounds(20, 140, 200, 30);
-        panel.add(btnCategorias);
-
-        btnAgregar = new JButton("Agregar Registro");
-        btnAgregar.setBounds(20, 180, 200, 30);
-        panel.add(btnAgregar);
-
-        btnReportes = new JButton("Generar Reportes");
-        btnReportes.setBounds(20, 220, 200, 30);
-        panel.add(btnReportes);
-
-        btnConfiguracion = new JButton("Configuración");
-        btnConfiguracion.setBounds(230, 180, 150, 30);
-        panel.add(btnConfiguracion);
-
-        btnSalir = new JButton("Salir");
-        btnSalir.setBounds(230, 220, 150, 30);
-        panel.add(btnSalir);
-
-        btnTransacciones.addActionListener(e -> mostrarMenuRegistros());
-        btnCuentas.addActionListener(e -> mostrarMenuCuentas());
-        btnCategorias.addActionListener(e -> mostrarMenuCategorias());
-        btnAgregar.addActionListener(e -> gestorRegistros.agregarRegistro());
-        btnReportes.addActionListener(e -> generarReportes());
-        btnConfiguracion.addActionListener(e -> mostrarMenuConfiguracion());
-        btnSalir.addActionListener(e -> salirDelPrograma());
-
+        panel.setLayout(new BorderLayout());
+    
+        panel.add(this.balance.generarBalance(), BorderLayout.PAGE_START);
+    
+        JPanel pnlBotones = new JPanel();
+        pnlBotones.setLayout(new GridLayout(0, 2, 50, 50));
+    
+        generarBoton("Ver Registros", e -> mostrarMenuRegistros(), pnlBotones);
+        generarBoton("Gestionar Cuentas", e -> mostrarMenuCuentas(), pnlBotones);
+        generarBoton("Gestionar Categorías", e -> mostrarMenuCategorias(), pnlBotones);
+        generarBoton("Agregar Registro", e -> gestorRegistros.agregarRegistro(), pnlBotones);
+        generarBoton("Generar Reporte", e -> generarReportes(), pnlBotones);
+        generarBoton("Configuración", e -> mostrarMenuConfiguracion(), pnlBotones);
+        generarBoton("Salir", e -> salirDelPrograma(), pnlBotones);
+    
+        panel.add(pnlBotones, BorderLayout.CENTER);
         panel.revalidate();
         panel.repaint();
     }
-
-    public JButton crearBotonVolverMenuPrincipal() {
-        JButton btnVolver = new JButton("Volver al Menú Principal");
-        btnVolver.setBounds(230, 20, 150, 30);
-        btnVolver.addActionListener(e -> volverAlMenuPrincipal());
-        return btnVolver;
-    }
-        
-    public void volverAlMenuPrincipal() {
-        mostrarMenuPrincipal(); // Simplemente mostrar el menú principal
+    
+    public void crearTopBarVolverMenuPrincipal(String nombreMenu) {
+        TopBar.crearTopBar(nombreMenu, e -> mostrarMenuPrincipal(), panel);
     }
 
     public void mostrarMenuCategorias() {
         panel.removeAll();
-        panel.repaint();
-        panel.add(crearBotonVolverMenuPrincipal());
-
-        lblBalance.setText("Menú de Categorías");
-        lblBalance.setBounds(20, 20, 200, 30);
-        panel.add(lblBalance);
-
-        JButton btnCrearCategoria = new JButton("Crear Categoría");
-        btnCrearCategoria.setBounds(20, 60, 200, 30);
-        panel.add(btnCrearCategoria);
-
-        JButton btnModificarCategoria = new JButton("Modificar Categoría");
-        btnModificarCategoria.setBounds(20, 100, 200, 30);
-        panel.add(btnModificarCategoria);
-
-        JButton btnEliminarCategoria = new JButton("Eliminar Categoría");
-        btnEliminarCategoria.setBounds(20, 140, 200, 30);
-        panel.add(btnEliminarCategoria);
-
-        JButton btnVerCategorias = new JButton("Ver Categorías");
-        btnVerCategorias.setBounds(20, 180, 200, 30);
-        panel.add(btnVerCategorias);
-
-        btnCrearCategoria.addActionListener(e -> gestorCategorias.crearCategoria());
-        btnModificarCategoria.addActionListener(e -> gestorCategorias.modificarCategoria());
-        btnEliminarCategoria.addActionListener(e -> gestorCategorias.eliminarCategoria());
-        btnVerCategorias.addActionListener(e -> gestorCategorias.listarCategorias());
-
+        panel.setLayout(new BorderLayout());
+        crearTopBarVolverMenuPrincipal("Menú de Categorías");
+    
+        JPanel pnlBotones = new JPanel();
+        pnlBotones.setLayout(new GridLayout(0, 2, 50, 50));
+    
+        generarBoton("Crear Categoría", e -> gestorCategorias.crearCategoria(), pnlBotones);
+        generarBoton("Modificar Categoría", e -> gestorCategorias.modificarCategoria(), pnlBotones);
+        generarBoton("Eliminar Categoría", e -> gestorCategorias.eliminarCategoria(), pnlBotones);
+        generarBoton("Ver Categorías", e -> gestorCategorias.listarCategorias(), pnlBotones);
+    
+        panel.add(pnlBotones, BorderLayout.CENTER);
         panel.revalidate();
-    }
+        panel.repaint();
+    }    
 
     public void mostrarMenuRegistros() {
         panel.removeAll();
-        panel.repaint();
-        panel.add(crearBotonVolverMenuPrincipal());
-
-        lblBalance.setText("Menú de Registro");
-        lblBalance.setBounds(20, 20, 200, 30);
-        panel.add(lblBalance);
-
-        JButton btnVerRegistros = new JButton("Ver Todos los Registros");
-        btnVerRegistros.setBounds(20, 60, 200, 30);
-        panel.add(btnVerRegistros);
-
-        JButton btnVerIngresos = new JButton("Ver Ingresos");
-        btnVerIngresos.setBounds(20, 100, 200, 30);
-        panel.add(btnVerIngresos);
-
-        JButton btnVerEgresos = new JButton("Ver Egresos");
-        btnVerEgresos.setBounds(20, 140, 200, 30);
-        panel.add(btnVerEgresos);
-
-        JButton btnVerTransferencias = new JButton("Ver Transferencias");
-        btnVerTransferencias.setBounds(20, 180, 200, 30);
-        panel.add(btnVerTransferencias);
-
-        JButton btnVerPorFecha = new JButton("Ver Registros por Fecha");
-        btnVerPorFecha.setBounds(20, 220, 200, 30);
-        panel.add(btnVerPorFecha);
-
-        btnVerRegistros.addActionListener(e -> gestorRegistros.mostrarTodosLosRegistros());
-        btnVerIngresos.addActionListener(e -> gestorRegistros.mostrarRegistrosPorTipo("Ingreso"));
-        btnVerEgresos.addActionListener(e -> gestorRegistros.mostrarRegistrosPorTipo("Egreso"));
-        btnVerTransferencias.addActionListener(e -> gestorRegistros.mostrarRegistrosPorTipo("Transaccion"));
-        btnVerPorFecha.addActionListener(e -> gestorRegistros.mostrarRegistrosPorFecha());
-
+        panel.setLayout(new BorderLayout());
+        crearTopBarVolverMenuPrincipal("Menú de Registros");
+    
+        JPanel pnlBotones = new JPanel();
+        pnlBotones.setLayout(new GridLayout(0, 2, 50, 50));
+    
+        generarBoton("Ver Todos los Registros", e -> gestorRegistros.mostrarTodosLosRegistros(), pnlBotones);
+        generarBoton("Ver Ingresos", e -> gestorRegistros.mostrarRegistrosPorTipo("Ingreso"), pnlBotones);
+        generarBoton("Ver Egresos", e -> gestorRegistros.mostrarRegistrosPorTipo("Egreso"), pnlBotones);
+        generarBoton("Ver Transferencias", e -> gestorRegistros.mostrarRegistrosPorTipo("Transaccion"), pnlBotones);
+        generarBoton("Ver Registros por Fecha", e -> gestorRegistros.mostrarRegistrosPorFecha(), pnlBotones);
+    
+        panel.add(pnlBotones, BorderLayout.CENTER);
         panel.revalidate();
+        panel.repaint();
     }
 
     public void mostrarMenuCuentas() {
         panel.removeAll();
-        panel.repaint();
-        panel.add(crearBotonVolverMenuPrincipal());
-
-        lblBalance.setText("Menú de Gestionar Cuentas");
-        lblBalance.setBounds(20, 20, 200, 30);
-        panel.add(lblBalance);
-
-        JButton btnVerCuentas = new JButton("Ver Cuentas");
-        btnVerCuentas.setBounds(20, 60, 200, 30);
-        panel.add(btnVerCuentas);
-
-        JButton btnAgregarCuenta = new JButton("Agregar Cuenta");
-        btnAgregarCuenta.setBounds(20, 100, 200, 30);
-        panel.add(btnAgregarCuenta);
-
-        JButton btnEditarCuenta = new JButton("Editar Cuenta");
-        btnEditarCuenta.setBounds(20, 140, 200, 30);
-        panel.add(btnEditarCuenta);
-
-        JButton btnEliminarCuenta = new JButton("Eliminar Cuenta");
-        btnEliminarCuenta.setBounds(20, 180, 200, 30);
-        panel.add(btnEliminarCuenta);
-
-        btnVerCuentas.addActionListener(e -> gestorCuentas.mostrarCuentas());
-        btnAgregarCuenta.addActionListener(e -> gestorCuentas.agregarCuenta());
-        btnEditarCuenta.addActionListener(e -> gestorCuentas.editarCuenta());
-        btnEliminarCuenta.addActionListener(e -> gestorCuentas.eliminarCuenta());
-
+        panel.setLayout(new BorderLayout());
+        crearTopBarVolverMenuPrincipal("Menú de Cuentas");
+    
+        JPanel pnlBotones = new JPanel();
+        pnlBotones.setLayout(new GridLayout(0, 2, 50, 50));
+    
+        generarBoton("Ver Cuentas", e -> gestorCuentas.mostrarCuentas(), pnlBotones);
+        generarBoton("Agregar Cuenta", e -> gestorCuentas.agregarCuenta(), pnlBotones);
+        generarBoton("Editar Cuenta", e -> gestorCuentas.editarCuenta(), pnlBotones);
+        generarBoton("Eliminar Cuenta", e -> gestorCuentas.eliminarCuenta(), pnlBotones);
+    
+        panel.add(pnlBotones, BorderLayout.CENTER);
         panel.revalidate();
-    }
+        panel.repaint();
+    }    
 
     public void mostrarMenuConfiguracion() {
         panel.removeAll();
-        panel.repaint();
-        panel.add(crearBotonVolverMenuPrincipal());
-
-        lblBalance.setText("Menú de Configuración");
-        lblBalance.setBounds(20, 20, 200, 30);
-        panel.add(lblBalance);
-
-        JButton btnMoneda = new JButton("Configurar Moneda Predeterminada");
-        btnMoneda.setBounds(20, 60, 300, 30);
-        panel.add(btnMoneda);
-
-        JButton btnFecha = new JButton("Configurar Formato de Fecha");
-        btnFecha.setBounds(20, 100, 300, 30);
-        panel.add(btnFecha);
-
-        btnMoneda.addActionListener(e -> configurarMoneda());
-        btnFecha.addActionListener(e -> configurarFormatoFecha());
-
+        panel.setLayout(new BorderLayout());
+        crearTopBarVolverMenuPrincipal("Menú de Configuración");
+    
+        JPanel pnlBotones = new JPanel();
+        pnlBotones.setLayout(new GridLayout(0, 2, 50, 50));
+    
+        generarBoton("Configurar Moneda Predeterminada", e -> configurarMoneda(), pnlBotones);
+        generarBoton("Configurar Formato de Fecha", e -> configurarFormatoFecha(), pnlBotones);
+    
+        panel.add(pnlBotones, BorderLayout.CENTER);
         panel.revalidate();
-    }
+        panel.repaint();
+    }    
 
     private void generarReportes() {
         // Lógica para generar reportes
@@ -244,10 +160,8 @@ public class Menu {
     }
 
     private void salirDelPrograma() {
-        // Lógica para salir del programa
         ManejoArchivos.guardarDatos(registros, cuentas, categorias);
         JOptionPane.showMessageDialog(null, "Saliendo de la aplicación. ¡Hasta luego!");
-        ventana.dispose(); // Cierra la ventana
-        // Aquí podrías agregar la lógica para guardar los datos antes de salir
+        ventana.dispose();
     }
 }
