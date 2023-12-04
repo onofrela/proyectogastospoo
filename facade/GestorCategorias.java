@@ -201,6 +201,8 @@ public class GestorCategorias {
             elegirCategoria(e -> {
                 JButton button = (JButton) e.getSource();
                 categoriaSeleccionada = (Categoria) button.getClientProperty("categoria");
+                iconoSeleccionado = categoriaSeleccionada.getIcono();
+                colorSeleccionado = categoriaSeleccionada.getColor();
                 editarDatosCategoria();
             });
         }
