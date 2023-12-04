@@ -20,6 +20,7 @@ public class TopBar {
         JPanel contenido = new JPanel(new BorderLayout());
         topBar.setSize(50, 1200);
         JLabel titulo = new JLabel(nombreMenu);
+        titulo.setFont(new Font("Segoe UI", Font.ROMAN_BASELINE, 30));
         titulo.setHorizontalAlignment(SwingConstants.CENTER);
         titulo.setVerticalAlignment(SwingConstants.CENTER);
         titulo.setPreferredSize(new Dimension(200, 30));
