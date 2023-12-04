@@ -8,7 +8,6 @@ import java.awt.event.ActionListener;
 
 import cuentas.Cuenta;
 import facade.componentes.TopBar;
-import monto.FormatoMonto;
 import monto.Monto;;
 
 public class GestorCuentas {
@@ -16,13 +15,13 @@ public class GestorCuentas {
     private JPanel panel;
     private ActionListener menuAVolver;
     private Cuenta cuentaSeleccionada;
-    private FormatoMonto formatoMonto;
+    private Configuracion configuracion;
 
-    public GestorCuentas(List<Cuenta> cuentas, ActionListener menuAVolver, JPanel panel, FormatoMonto formatoMonto){
+    public GestorCuentas(List<Cuenta> cuentas, ActionListener menuAVolver, JPanel panel, Configuracion configuracion){
         this.panel = panel;
         this.cuentas = cuentas;
         this.menuAVolver = menuAVolver;
-        this.formatoMonto = formatoMonto;
+        this.configuracion = configuracion;
     }
     
     public List<Cuenta> getCuentas(){
@@ -120,7 +119,7 @@ public class GestorCuentas {
             }
 
             // Crear una nueva cuenta y agregarla a la lista
-            Cuenta nuevaCuenta = new Cuenta(nuevoNombre, nuevoSaldo, formatoMonto);
+            Cuenta nuevaCuenta = new Cuenta(nuevoNombre, nuevoSaldo, this.configuracion);
             cuentas.add(nuevaCuenta);
 
             JOptionPane.showMessageDialog(null, "Cuenta agregada con éxito.", "Éxito", JOptionPane.INFORMATION_MESSAGE);

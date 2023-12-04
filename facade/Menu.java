@@ -28,8 +28,8 @@ public class Menu {
     private static GestorRegistros gestorRegistros;
     private static GestorFechas gestorFechas;
     private static GestorMonedas gestorMonedas;
+    private static Configuracion configuracion;
 
-    private FormatoMonto formatoMonto;
 
     private Balance balance;
 
@@ -37,14 +37,17 @@ public class Menu {
         this.ventana = ventana;
         this.panel = panel;
         this.balance = new Balance(cuentas);
-        this.formatoMonto = new FormatoMonto("$", "MXN");
-
-        ManejoArchivos.cargarDatos(registros, cuentas, categorias);
-        
-        gestorCuentas = new GestorCuentas(cuentas, e -> mostrarMenuCuentas(), panel, this.formatoMonto);
+        configuracion = new Configuracion(new FormatoMonto("$", "MXN"),"dd 'de' MMMM 'del' yyyy" , "es", "ES");
+        System.out.println(configuracion.getIdioma());
+        System.out.println(configuracion.getPais());
+        System.out.println(configuracion.getPatron());
+        System.out.println(configuracion.getFormatoMonto().getMoneda());
+        System.out.println(configuracion.getFormatoMonto().getSimboloMoneda());
+        ManejoArchivos.cargarDatos(registros, cuentas, categorias, configuracion);
+        gestorCuentas = new GestorCuentas(cuentas, e -> mostrarMenuCuentas(), panel, configuracion);
         gestorCategorias = new GestorCategorias(categorias, e -> mostrarMenuCategorias(), panel);
-        gestorRegistros = new GestorRegistros(gestorCategorias, gestorCuentas, registros, panel, e -> mostrarMenuRegistros(), this.formatoMonto);
-        gestorMonedas = new GestorMonedas(formatoMonto, panel, e -> mostrarMenuConfiguracion());
+        gestorRegistros = new GestorRegistros(gestorCategorias, gestorCuentas, registros, panel, e -> mostrarMenuRegistros(), configuracion);
+        gestorMonedas = new GestorMonedas(panel, e -> mostrarMenuConfiguracion(), configuracion);
     }
 
     public JButton generarBoton(String texto, ActionListener listener, JPanel panel) {
@@ -181,7 +184,7 @@ public class Menu {
 
 
     private void salirDelPrograma() {
-        ManejoArchivos.guardarDatos(registros, cuentas, categorias);
+        ManejoArchivos.guardarDatos(registros, cuentas, categorias, configuracion);
         JOptionPane.showMessageDialog(null, "Saliendo de la aplicación. ¡Hasta luego!");
         ventana.dispose();
     }

@@ -8,17 +8,16 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 
 import facade.componentes.TopBar;
-import monto.FormatoMonto;
 
 public class GestorMonedas {
-    private FormatoMonto formato;
     private JPanel panel;
     private ActionListener menuAVolver;
+    private Configuracion configuracion;
 
-    public GestorMonedas(FormatoMonto formato, JPanel panel, ActionListener menuAVolver){
-        this.formato = formato;
+    public GestorMonedas(JPanel panel, ActionListener menuAVolver, Configuracion configuracion){
         this.menuAVolver = menuAVolver;
         this.panel = panel;
+        this.configuracion = configuracion;
     }
 
     public void configurarMoneda() {
@@ -29,11 +28,11 @@ public class GestorMonedas {
         JPanel pnlBotones = new JPanel();
         pnlBotones.setLayout(new GridLayout(0, 2, 50, 50));
     
-        generarBoton("Pesos Mexicanos", e -> {formato = new FormatoMonto("$", "MXN");menuAVolver.actionPerformed(null);}, pnlBotones);
-        generarBoton("Dólares Americanos", e -> {formato = new FormatoMonto("$", "USD");menuAVolver.actionPerformed(null);}, pnlBotones);
-        generarBoton("Euros", e -> {formato = new FormatoMonto("€", "EUR");menuAVolver.actionPerformed(null);}, pnlBotones);
-        generarBoton("Yenes", e -> {formato = new FormatoMonto("¥", "JPY");menuAVolver.actionPerformed(null);}, pnlBotones);
-    
+        generarBoton("Pesos Mexicanos", e -> {this.configuracion.getFormatoMonto().setSimboloMoneda("$");this.configuracion.getFormatoMonto().setMoneda("MXN");menuAVolver.actionPerformed(null);}, pnlBotones);
+        generarBoton("Dólares Americanos", e -> {this.configuracion.getFormatoMonto().setSimboloMoneda("$");this.configuracion.getFormatoMonto().setMoneda("USD");menuAVolver.actionPerformed(null);}, pnlBotones);
+        generarBoton("Euros", e -> {this.configuracion.getFormatoMonto().setSimboloMoneda("€");this.configuracion.getFormatoMonto().setMoneda("EUR");menuAVolver.actionPerformed(null);}, pnlBotones);
+        generarBoton("Yenes", e -> {this.configuracion.getFormatoMonto().setSimboloMoneda("¥");this.configuracion.getFormatoMonto().setMoneda("JPY");menuAVolver.actionPerformed(null);}, pnlBotones);
+
         panel.add(pnlBotones, BorderLayout.CENTER);
         panel.revalidate();
         panel.repaint();

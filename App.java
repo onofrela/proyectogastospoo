@@ -8,6 +8,7 @@ public class App {
     private JFrame ventana;
     private JPanel panel;
     private Menu menu;
+
     public App() {
         initialize();
     }

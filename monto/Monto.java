@@ -2,13 +2,15 @@ package monto;
 
 import java.io.Serializable;
 
+import facade.Configuracion;
+
 public class Monto implements Serializable {
     private double monto;
-    private FormatoMonto formato;
+    private Configuracion configuracion;
 
-    public Monto(double monto, FormatoMonto formato) {
+    public Monto(double monto, Configuracion configuracion) {
         this.monto = monto;
-        this.formato = formato;
+        this.configuracion = configuracion;
     }
 
     public double getMonto() {
@@ -21,6 +23,6 @@ public class Monto implements Serializable {
 
     @Override
     public String toString() {
-        return formato.getSimboloMoneda() + String.format("%.2f", monto) + " " + formato.getMoneda();
+        return this.configuracion.getFormatoMonto().getSimboloMoneda() + String.format("%.2f", monto) + " " + this.configuracion.getFormatoMonto().getMoneda();
     }
 }

@@ -3,31 +3,26 @@ import java.io.Serializable;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
-import monto.FormatoMonto;
+import facade.Configuracion;
 import monto.Monto;
 
 import java.time.LocalDateTime;
 
 public abstract class Registro implements Serializable {
-    private String patron;
     private LocalDateTime fecha;
-    private String idioma;
-    private String pais;
+    private Configuracion configuracion;
     private String descripcion;
     private Monto monto;
 
-    public Registro(LocalDateTime fecha, String descripcion, double monto, FormatoMonto formatoMonto) {
+    public Registro(LocalDateTime fecha, String descripcion, double monto, Configuracion configuracion) {
         this.fecha = fecha;
         this.descripcion = descripcion;
-        this.monto = new Monto(monto, formatoMonto);
-        this.patron = "dd 'de' MMMM 'del' yyyy";
-        this.idioma = "es";
-        this.pais = "ES";
-
+        this.configuracion = configuracion;
+        this.monto = new Monto(monto, this.configuracion);
     }
 
     public String obtenerFecha() {
-        DateTimeFormatter formato = DateTimeFormatter.ofPattern(patron, new Locale(idioma, pais));
+        DateTimeFormatter formato = DateTimeFormatter.ofPattern(this.configuracion.getPatron(), new Locale(this.configuracion.getIdioma(), this.configuracion.getPais()));
         return this.fecha.format(formato);
     }
 
