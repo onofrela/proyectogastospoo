@@ -51,15 +51,13 @@ public class GestorCategorias {
     
     public void elegirColor() {
     
-        JPanel pnlColores = new JPanel(new GridLayout(3, 10));
-        // Crear botones para cada color permitido
+        JPanel pnlColores = new JPanel(new GridLayout(8, 8));
         for (Color color: colores) {
             JButton btnColor = new JButton();
             btnColor.setBackground(color);
             btnColor.setPreferredSize(new Dimension(30, 30));
             btnColor.setCursor(new Cursor(Cursor.HAND_CURSOR));
     
-            // Agregar acción al botón para seleccionar el color
             btnColor.addActionListener(e -> {
                 JButton btnColorSeleccionado = (JButton) e.getSource();
                 this.colorSeleccionado = btnColorSeleccionado.getBackground();
@@ -86,7 +84,6 @@ public class GestorCategorias {
                 btnIcono.setPreferredSize(new Dimension(50, 50));
                 btnIcono.setCursor(new Cursor(Cursor.HAND_CURSOR));
     
-                // Acción al hacer clic en el botón de ícono
                 btnIcono.addActionListener(e -> {
                     this.iconoSeleccionado = icono;
                 });
@@ -275,8 +272,6 @@ public class GestorCategorias {
     public JPanel generarIcono(Categoria categoria) {
         ImageIcon icono = categoria.getIcono();
         Color color = categoria.getColor();
-
-        // Crear el panel que contendrá el ícono circular
         JPanel panelIconoColor = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
@@ -302,7 +297,6 @@ public class GestorCategorias {
     }
 
     public JPanel generarIcono(ImageIcon icono, Color color) {
-        // Crear el panel que contendrá el ícono circular
         JPanel panelIconoColor = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
@@ -328,7 +322,6 @@ public class GestorCategorias {
     }
 
     private JPanel generarPanelCategoria(Categoria categoria) {
-        // Crear el ícono
         JPanel panelCategoria = new JPanel();
         panelCategoria.setPreferredSize(new Dimension(240, 60));
         panelCategoria.setLayout(new BorderLayout());
@@ -348,7 +341,7 @@ public class GestorCategorias {
         JLabel nombreCategoria = new JLabel(categoria.getNombre());
         nombreCategoria.setVerticalAlignment(SwingConstants.CENTER);
         nombreCategoria.setHorizontalAlignment(SwingConstants.LEFT);
-        nombreCategoria.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0)); // Agrega un margen a la izquierda del texto
+        nombreCategoria.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
 
         panelCategoria.add(panelIcono, BorderLayout.WEST);
         panelCategoria.add(nombreCategoria, BorderLayout.CENTER);

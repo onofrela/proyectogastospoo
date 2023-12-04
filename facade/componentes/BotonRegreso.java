@@ -13,7 +13,7 @@ public class BotonRegreso {
         java.net.URL imgURL = BotonRegreso.class.getResource("./iconos/back.png");
         ImageIcon icono = new ImageIcon(imgURL);
         JButton btnVolver = new JButton(icono);
-        btnVolver.setPreferredSize(new Dimension(50, 50)); // Establecer el tamaño preferido
+        btnVolver.setPreferredSize(new Dimension(50, 50));
         Estilos.estilizarBoton(btnVolver);
         btnVolver.addActionListener(menuAVolver);
         return btnVolver;

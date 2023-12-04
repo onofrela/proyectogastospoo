@@ -8,7 +8,6 @@ public class Cuenta implements Serializable {
     private String nombre;
     private Monto saldo;
 
-    // Constructor
     public Cuenta(String nombre, double saldo, Configuracion configuracion) {
         this.nombre = nombre;
         this.saldo = new Monto(saldo, configuracion);

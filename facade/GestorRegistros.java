@@ -117,7 +117,6 @@ public class GestorRegistros {
             panel.removeAll();
             panel.setLayout(new BorderLayout());
             
-            // Cambia el mensaje en la barra superior según el tipo
             TopBar.crearTopBar("Registros de tipo " + tipo, menuAVolver, panel);
             
             JPanel pnlRegistros = new JPanel(new GridLayout(0, 1));
@@ -228,7 +227,6 @@ public class GestorRegistros {
         panel.removeAll();
         panel.setLayout(new BorderLayout());
     
-        // TopBar: Elegir tipo de registro
         TopBar.crearTopBar("Elige el tipo de registro", e -> menuAVolver.actionPerformed(null), panel);
     
         JPanel panelTipoRegistro = new JPanel(new GridLayout(3, 1));
@@ -240,17 +238,14 @@ public class GestorRegistros {
         Estilos.estilizarBoton(btnEgreso);
         Estilos.estilizarBoton(btnTransferencia);
     
-        // Acción al elegir Ingreso
         btnIngreso.addActionListener(e -> {
             mostrarFormularioRegistro("Ingreso");
         });
     
-        // Acción al elegir Egreso
         btnEgreso.addActionListener(e -> {
             mostrarFormularioRegistro("Egreso");
         });
     
-        // Acción al elegir Transferencia
         btnTransferencia.addActionListener(e -> {
             if(cuentas.size() < 2){
                 JOptionPane.showMessageDialog(null, "No existen suficientes cuentas para hacer una transferencia.", "Cuentas insuficientes", JOptionPane.WARNING_MESSAGE);
@@ -258,7 +253,6 @@ public class GestorRegistros {
                 mostrarFormularioRegistro("Transferencia");
         });
     
-        // Agregar botones al panel de selección de tipo de registro
         panelTipoRegistro.add(btnIngreso);
         panelTipoRegistro.add(btnEgreso);
         panelTipoRegistro.add(btnTransferencia);

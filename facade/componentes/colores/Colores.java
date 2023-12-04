@@ -5,17 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Colores {
-    public final static Color BLANCO = new Color(255, 255, 255);
-    public final static Color NEGRO = new Color(0, 0, 0);
-    public final static Color GRIS_100 = new Color(249, 250, 251);
-    public final static Color GRIS_200 = new Color(243, 244, 246);
-    public final static Color GRIS_300 = new Color(229, 231, 235);
-    public final static Color GRIS_400 = new Color(209, 213, 219);
-    public final static Color GRIS_500 = new Color(156, 163, 175);
-    public final static Color GRIS_600 = new Color(107, 114, 128);
-    public final static Color GRIS_700 = new Color(75, 85, 99);
-    public final static Color GRIS_800 = new Color(55, 65, 81);
-    public final static Color GRIS_900 = new Color(31, 41, 55);
     public final static Color ROJO_100 = new Color(254, 226, 226);
     public final static Color ROJO_200 = new Color(254, 202, 202);
     public final static Color ROJO_300 = new Color(252, 165, 165);
@@ -88,10 +77,21 @@ public class Colores {
     public final static Color ROSA_700 = new Color(186, 29, 96);
     public final static Color ROSA_800 = new Color(153, 27, 78);
     public final static Color ROSA_900 = new Color(126, 26, 61);
+    public final static Color GRIS_100 = new Color(249, 250, 251);
+    public final static Color GRIS_200 = new Color(243, 244, 246);
+    public final static Color GRIS_300 = new Color(229, 231, 235);
+    public final static Color GRIS_400 = new Color(209, 213, 219);
+    public final static Color GRIS_500 = new Color(156, 163, 175);
+    public final static Color GRIS_600 = new Color(107, 114, 128);
+    public final static Color GRIS_700 = new Color(75, 85, 99);
+    public final static Color GRIS_800 = new Color(55, 65, 81);
+    public final static Color GRIS_900 = new Color(31, 41, 55);
+    public final static Color BLANCO = new Color(255, 255, 255);
+    public final static Color NEGRO = new Color(0, 0, 0);
 
     public static Color[] obtenerColores() {
         List<Color> listaColores = new ArrayList<>();
-        Field[] campos = Colores.class.getDeclaredFields(); // Obtener todos los campos de la clase
+        Field[] campos = Colores.class.getDeclaredFields();
 
         for (Field campo : campos) {
             try {

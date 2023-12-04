@@ -82,8 +82,8 @@ public class GestorCuentas {
 
                 JButton button = new JButton(cuenta.toString());
                 Estilos.estilizarBoton(button);
-                button.putClientProperty("cuenta", cuenta); // Asociar la cuenta con el botón
-                button.addActionListener(accion); // Asociar el listener al botón
+                button.putClientProperty("cuenta", cuenta);
+                button.addActionListener(accion);
                 pnlCuentas.add(button);
             }
             panel.add(new JScrollPane(pnlCuentas), BorderLayout.CENTER);
@@ -113,23 +113,18 @@ public class GestorCuentas {
         JButton btnAgregar = new JButton("Agregar");
         Estilos.estilizarBoton(btnAgregar);
         btnAgregar.addActionListener(e -> {
-            // Obtener los valores ingresados por el usuario
             String nuevoNombre = txtNombreCuenta.getText();
             double nuevoSaldo = Double.parseDouble(txtSaldo.getText());
 
-            // Verificar si ya existe una cuenta con ese nombre
             if (existeCuenta(nuevoNombre)) {
                 JOptionPane.showMessageDialog(null, "¡La cuenta ya existe!", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
-            // Crear una nueva cuenta y agregarla a la lista
             Cuenta nuevaCuenta = new Cuenta(nuevoNombre, nuevoSaldo, this.configuracion);
             cuentas.add(nuevaCuenta);
 
             JOptionPane.showMessageDialog(null, "Cuenta agregada con éxito.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-
-            // Volver al menú principal
             menuAVolver.actionPerformed(null);
         });
 
@@ -173,23 +168,18 @@ public class GestorCuentas {
         JButton btnModificar = new JButton("Modificar");
         Estilos.estilizarBoton(btnModificar);
         btnModificar.addActionListener(e -> {
-            // Obtener los nuevos valores y actualizar la cuenta
             String nuevoNombre = txtNombreCuenta.getText();
             double nuevoSaldo = Double.parseDouble(txtSaldo.getText());
             
-            // Verificar si ya existe una cuenta con ese nombre
             if (!nuevoNombre.equals(cuentaSeleccionada.getNombre()) && existeCuenta(nuevoNombre)) {
                 JOptionPane.showMessageDialog(null, "¡Ya existe una cuenta con ese nombre!", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-    
-            // Actualizar los datos de la cuenta seleccionada
+
             cuentaSeleccionada.setNombre(nuevoNombre);
             cuentaSeleccionada.setSaldo(nuevoSaldo);
     
             JOptionPane.showMessageDialog(null, "Cuenta modificada con éxito.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-    
-            // Volver al menú principal
             menuAVolver.actionPerformed(null);
         });
     

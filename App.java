@@ -27,7 +27,7 @@ public class App {
     private void initialize() {
         ManejoArchivos.cargarDatos(this.registros, this.cuentas, this.categorias, this.configuracion);
         ventana = new JFrame("Registro de Gastos");
-        ventana.setSize(800, 600); // Establece el tamaño predeterminado de la ventana principal
+        ventana.setSize(1080, 720);
         ventana.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         Image icon = new ImageIcon(getClass().getResource("/icon.png")).getImage();
         ventana.setIconImage(icon);

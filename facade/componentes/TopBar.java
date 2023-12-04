@@ -73,10 +73,10 @@ public class TopBar {
 
     public static void actualizarIcono(JPanel iconoNuevo){
         if (iconoNuevo != null) {
-            panelIcono.removeAll(); // Elimina cualquier componente en el panel de ícono
-            panelIcono.add(iconoNuevo); // Agrega el nuevo ícono al panel
-            panelIcono.revalidate(); // Revalida el panel para reflejar los cambios
-            panelIcono.repaint(); // Repinta el panel para mostrar el nuevo ícono
+            panelIcono.removeAll();
+            panelIcono.add(iconoNuevo);
+            panelIcono.revalidate();
+            panelIcono.repaint();
         }
     }
 

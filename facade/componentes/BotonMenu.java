@@ -11,7 +11,7 @@ public class BotonMenu {
         java.net.URL imgURL = BotonRegreso.class.getResource("./iconos/home.png");
         ImageIcon icono = new ImageIcon(imgURL);
         JButton btnMenu = new JButton(icono);
-        btnMenu.setPreferredSize(new Dimension(45, 45)); // Establecer el tamaño preferido
+        btnMenu.setPreferredSize(new Dimension(45, 45));
         btnMenu.addActionListener(menuAVolver);
         return btnMenu;
     }    
