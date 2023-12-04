@@ -2,6 +2,7 @@ package facade;
 
 import java.util.List;
 import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.ActionListener;
 
@@ -33,23 +34,30 @@ public class GestorCuentas {
         }
     }
 
+    public JPanel generarCartaCuenta(Cuenta cuenta) {
+        JPanel carta = new JPanel(new BorderLayout());
+        JLabel textoCuenta = new JLabel();
+        double saldoCuenta = cuenta.getSaldo();
+        String saldoFormateado = String.format("%.2f", saldoCuenta);
+        String balanceCuenta = cuenta.getNombre() + ": $" + saldoFormateado + "\n";
+        textoCuenta.setText(balanceCuenta);
+        textoCuenta.setHorizontalAlignment(SwingConstants.CENTER);
+        textoCuenta.setForeground(new Color (249, 248, 237));
+        textoCuenta.setFont(new Font("Segoe UI", Font.BOLD, 17));
+        carta.add(textoCuenta);
+        carta.setBackground(new Color(8, 129, 163));
+        return carta;
+    }
+
     public void mostrarCuentas() {
         if (existenCuentas()) {
             panel.removeAll();
             panel.setLayout(new BorderLayout());
             TopBar.crearTopBar("Cuentas", menuAVolver, panel);
             
-            JPanel pnlCuentas = new JPanel(new GridLayout(0, 1));
-            JLabel textoCuenta;
-            
+            JPanel pnlCuentas = new JPanel(new GridLayout(0, 1, 50, 50));
             for (Cuenta cuenta : cuentas) {
-                textoCuenta = new JLabel();
-                double saldoCuenta = cuenta.getSaldo();
-                String saldoFormateado = String.format("%.2f", saldoCuenta);
-                String balanceCuenta = cuenta.getNombre() + ": $" + saldoFormateado + "\n";
-                textoCuenta.setText(balanceCuenta);
-                textoCuenta.setHorizontalAlignment(SwingConstants.CENTER);
-                pnlCuentas.add(textoCuenta);
+                pnlCuentas.add(generarCartaCuenta(cuenta));
             }
             
             panel.add(pnlCuentas);
