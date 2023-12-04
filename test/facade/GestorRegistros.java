@@ -46,6 +46,13 @@ public class GestorRegistros {
         }
     }
     
+    private String formatRegistroText(Registro registro) {
+        return "<span style='font-family: Arial; font-size: 14pt; color: black;'>" + 
+                "Fecha: " + registro.getFecha() + "<br>" +
+                "Descripción: " + registro.getDescripcion()+ "<br>" +
+                "Monto: $" + registro.getMonto() + "</span>";
+    }
+
     public void mostrarTodosLosRegistros() {
         if (existenRegistros()) {
             panel.removeAll();
@@ -58,8 +65,8 @@ public class GestorRegistros {
             JLabel textoRegistro;
             
             for (Registro registro : registros) {
-                textoRegistro = new JLabel(registro.toString());
-                textoRegistro.setHorizontalAlignment(SwingConstants.CENTER);
+                textoRegistro = new JLabel("<html><div style='text-align: center;'>" + 
+                formatRegistroText(registro) + "</div></html>");
                 pnlRegistros.add(textoRegistro);
             }
             
