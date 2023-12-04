@@ -180,6 +180,9 @@ public class GestorCategorias {
     }    
 
     public void crearCategoria() {
+        this.colorSeleccionado = Color.RED;
+        this.iconoSeleccionado = new ImageIcon(getClass().getResource("/categoria/iconos/box.png"));
+        this.txtNombreCategoria.setText("");
         JButton btnAgregar = new JButton("Agregar");
         Estilos.estilizarBoton(btnAgregar);
         btnAgregar.addActionListener(e -> {
