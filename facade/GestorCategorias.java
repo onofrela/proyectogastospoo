@@ -91,9 +91,7 @@ public class GestorCategorias {
     
                 // Acción al hacer clic en el botón de ícono
                 btnIcono.addActionListener(e -> {
-                    JButton btnIconoSeleccionado = (JButton) e.getSource();
-                    // Actualizar el ícono seleccionado en el GestorCategorias
-                    this.iconoSeleccionado = icono; // o el nombre del ícono seleccionado
+                    this.iconoSeleccionado = icono;
                 });
     
                 pnlIconos.add(btnIcono);
