@@ -99,7 +99,8 @@ public class GestorCuentas {
 
         JLabel lblNombreCuenta = new JLabel("Nombre de la cuenta:");
         JLabel lblSaldo = new JLabel("Saldo inicial:");
-
+        lblNombreCuenta.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+        lblSaldo.setFont(new Font("Segoe UI", Font.PLAIN, 16));
         JTextField txtNombreCuenta = new JTextField();
         JTextField txtSaldo = new JTextField();
 
