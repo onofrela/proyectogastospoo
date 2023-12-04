@@ -23,6 +23,6 @@ public class Monto implements Serializable {
 
     @Override
     public String toString() {
-        return this.configuracion.getFormatoMonto().getSimboloMoneda() + String.format("%.2f", monto) + " " + this.configuracion.getFormatoMonto().getMoneda();
+        return this.configuracion.getFormatoMonto().getSimboloMoneda() + String.format("%.2f", this.monto) + " " + this.configuracion.getFormatoMonto().getMoneda();
     }
 }

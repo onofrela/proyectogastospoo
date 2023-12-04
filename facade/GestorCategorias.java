@@ -10,9 +10,11 @@ import java.awt.*;
 
 import categoria.Categoria;
 import facade.componentes.TopBar;
+import facade.componentes.colores.Colores;
 
 public class GestorCategorias {
     private List<Categoria> categorias;
+    private Color[] colores;
     private ActionListener menuAVolver;
     private JPanel panel;
     private Categoria categoriaSeleccionada;
@@ -26,6 +28,7 @@ public class GestorCategorias {
         this.panel = panel;
         java.net.URL imgURL = getClass().getResource("/categoria/iconos/unknown.png");
         ImageIcon icono = new ImageIcon(imgURL);
+        this.colores = Colores.obtenerColores();
 
         this.categoriaNula = new Categoria("Sin Categoria", icono, Color.WHITE);
         this.colorSeleccionado = Color.RED;
@@ -41,7 +44,7 @@ public class GestorCategorias {
     }
     
     public Color elegirColor() {
-        Color[] coloresPermitidos = {Color.RED, Color.BLUE, Color.GREEN, Color.YELLOW, Color.ORANGE}; // Lista de colores permitidos
+        Color[] coloresPermitidos = colores; // Lista de colores permitidos
     
         JPanel pnlColores = new JPanel(new GridLayout(1, coloresPermitidos.length));
         JButton[] btnColores = new JButton[coloresPermitidos.length];

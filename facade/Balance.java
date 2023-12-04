@@ -5,15 +5,18 @@ import java.awt.*;
 import java.util.List;
 
 import cuentas.Cuenta;
+import monto.Monto;
 
 public class Balance {
     public JLabel textoCuentas;
     public JLabel textoTotal;
     public JLabel textoSinCuentas;
     public List<Cuenta> cuentas;
+    private Configuracion configuracion;
 
-    public Balance(List<Cuenta> cuentas){
+    public Balance(List<Cuenta> cuentas, Configuracion configuracion){
         this.cuentas = cuentas;
+        this.configuracion = configuracion;
 
         this.textoCuentas = new JLabel("Balance de Cuentas");
         this.textoCuentas.setHorizontalAlignment(SwingConstants.CENTER);
@@ -29,8 +32,8 @@ public class Balance {
     }
 
     public JPanel generarBalance() {
-        double saldoCuenta;
-        String saldoFormateado, balanceCuenta;
+        Monto saldoCuenta;
+        String balanceCuenta;
         JLabel texto;
         JPanel pnlBalance = new JPanel(new GridLayout(0, 1));
 
@@ -38,18 +41,18 @@ public class Balance {
             pnlBalance.add(this.textoCuentas);
 
             for (Cuenta cuenta : this.cuentas) {
-                saldoCuenta = cuenta.getSaldo();
-                saldoFormateado = String.format("%.2f", saldoCuenta);
-                balanceCuenta = cuenta.getNombre() + ": $" + saldoFormateado;
+                saldoCuenta = cuenta.getSaldoFormateado();
+                balanceCuenta = cuenta.getNombre() + ": " + saldoCuenta;
                 texto = new JLabel(balanceCuenta); 
                 texto.setHorizontalAlignment(SwingConstants.CENTER);
                 pnlBalance.add(texto);
             }
 
             double balanceTotal = cuentas.stream().mapToDouble(Cuenta::getSaldo).sum();
-            String balanceTotalFormateado = String.format("%.2f", balanceTotal);
             pnlBalance.add(this.textoTotal);
-            texto = new JLabel("$" + balanceTotalFormateado);
+
+            String textoTotal = this.configuracion.getFormatoMonto().getSimboloMoneda() + String.format("%.2f", balanceTotal) + " " + this.configuracion.getFormatoMonto().getMoneda();
+            texto = new JLabel(textoTotal);
             texto.setHorizontalAlignment(SwingConstants.CENTER);
             pnlBalance.add(texto);
 

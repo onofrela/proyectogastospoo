@@ -36,14 +36,9 @@ public class Menu {
     public Menu(JFrame ventana, JPanel panel){
         this.ventana = ventana;
         this.panel = panel;
-        this.balance = new Balance(cuentas);
         configuracion = new Configuracion(new FormatoMonto("$", "MXN"),"dd 'de' MMMM 'del' yyyy" , "es", "ES");
-        System.out.println(configuracion.getIdioma());
-        System.out.println(configuracion.getPais());
-        System.out.println(configuracion.getPatron());
-        System.out.println(configuracion.getFormatoMonto().getMoneda());
-        System.out.println(configuracion.getFormatoMonto().getSimboloMoneda());
         ManejoArchivos.cargarDatos(registros, cuentas, categorias, configuracion);
+        this.balance = new Balance(cuentas, configuracion);
         gestorCuentas = new GestorCuentas(cuentas, e -> mostrarMenuCuentas(), panel, configuracion);
         gestorCategorias = new GestorCategorias(categorias, e -> mostrarMenuCategorias(), panel);
         gestorRegistros = new GestorRegistros(gestorCategorias, gestorCuentas, registros, panel, e -> mostrarMenuRegistros(), configuracion);
