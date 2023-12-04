@@ -1,15 +1,22 @@
 package facade;
+
+import java.awt.*;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
+
+import javax.swing.*;
 
 import categoria.Categoria;
 import cuentas.Cuenta;
-import registros.Registro;
 import datos.ManejoArchivos;
+import registros.Registro;
+import facade.componentes.TopBar;
 
 public class Menu {
-    private static Scanner entrada = new Scanner(System.in);
+    public JLabel lblBalance;
+    public JPanel panel;
+    public JFrame ventana;
 
     private static List<Registro> registros = new ArrayList<>();
     private static List<Cuenta> cuentas = new ArrayList<>();
@@ -19,213 +26,141 @@ public class Menu {
     private static GestorCategorias gestorCategorias;
     private static GestorRegistros gestorRegistros;
 
-    public static void Principal() {
-        int opcion;
+    private Balance balance;
+
+    public Menu(JFrame ventana, JPanel panel){
+        this.ventana = ventana;
+        this.panel = panel;
+        this.balance = new Balance(cuentas);
+
         ManejoArchivos.cargarDatos(registros, cuentas, categorias);
         
-        gestorCuentas = new GestorCuentas(cuentas, entrada);
-        gestorCategorias = new GestorCategorias(categorias, entrada);
-        gestorRegistros = new GestorRegistros(cuentas, registros, gestorCategorias, gestorCuentas, entrada);
-
-        do {
-            Balance.mostrarBalances(cuentas);
-            System.out.println("----- Menú Principal -----");
-            System.out.println("1. Ver Transacciones");
-            System.out.println("2. Gestionar Cuentas");
-            System.out.println("3. Gestionar Categorías");
-            System.out.println("4. Agregar Transacción");
-            System.out.println("5. Generar Reportes");
-            System.out.println("6. Configuración");
-            System.out.println("7. Salir");
-            System.out.print("Selecciona una opción (1-7): ");
-
-            opcion = entrada.nextInt();
-            entrada.nextLine();  // Limpiar el buffer de entrada
-
-            switch (opcion) {
-                case 1:
-                    mostrarMenuTransacciones();
-                    break;
-                case 2:
-                    mostrarMenuCuentas();
-                    break;
-                case 3:
-                    mostrarMenuCategorias();
-                    break;
-                case 4:
-                    gestorRegistros.agregarRegistro();
-                    break;
-                case 5:
-                    generarReportes();
-                    break;
-                case 6:
-                    mostrarMenuConfiguracion();
-                    break;
-                case 7:
-                    System.out.println("Saliendo de la aplicación. ¡Hasta luego!");
-                    break;
-                default:
-                    System.out.println("Opción no válida. Por favor, selecciona una opción válida.");
-            }
-
-        } while (opcion != 7);
-
-        ManejoArchivos.guardarDatos(registros, cuentas, categorias);
-        entrada.close();
+        gestorCuentas = new GestorCuentas(cuentas, e -> mostrarMenuCuentas(), panel);
+        gestorCategorias = new GestorCategorias(categorias, e -> mostrarMenuCategorias(), panel);
+        gestorRegistros = new GestorRegistros(gestorCategorias, gestorCuentas, registros, panel, e -> mostrarMenuRegistros());
     }
 
-    private static void mostrarMenuCategorias() {
-        int opcion;
-    
-        do {
-            System.out.println("----- Menú de Categorías -----");
-            System.out.println("1. Crear Categoría");
-            System.out.println("2. Modificar Categoría");
-            System.out.println("3. Eliminar Categoría");
-            System.out.println("4. Ver Categorías");
-            System.out.println("5. Volver al Menú Principal");
-            System.out.print("Selecciona una opción (1-5): ");
-    
-            opcion = entrada.nextInt();
-            entrada.nextLine();  // Limpiar el buffer de entrada
-    
-            switch (opcion) {
-                case 1:
-                    gestorCategorias.crearCategoria();
-                    break;
-                case 2:
-                    gestorCategorias.modificarCategoria();
-                    break;
-                case 3:
-                    gestorCategorias.eliminarCategoria();
-                    break;
-                case 4:
-                    if(!categorias.isEmpty())
-                        gestorCategorias.enlistarCategorias();
-                    else
-                        System.out.println("Sin categorías");
-                case 5:
-                    System.out.println("Volviendo al Menú Principal...");
-                    break;
-                default:
-                    System.out.println("Opción no válida. Por favor, selecciona una opción válida.");
-            }
-    
-        } while (opcion != 5);
+    public JButton generarBoton(String texto, ActionListener listener, JPanel panel) {
+        JButton boton = new JButton(texto);
+        boton.addActionListener(listener);
+        boton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        boton.setAlignmentY(Component.CENTER_ALIGNMENT);
+        panel.add(boton);
+        return boton;
     }
     
-    private static void mostrarMenuTransacciones() {
-        int opcion;
+    public void mostrarMenuPrincipal() {
+        panel.removeAll();
+        panel.setLayout(new BorderLayout());
     
-        do {
-            System.out.println("----- Menú de Transacciones -----");
-            System.out.println("1. Ver Todos los Registros");
-            System.out.println("2. Ver Ingresos");
-            System.out.println("3. Ver Egresos");
-            System.out.println("4. Ver Transferencias");
-            System.out.println("5. Ver Registros por Fecha");
-
-            System.out.println("6. Volver al Menú Principal");
-            System.out.print("Selecciona una opción (1-6): ");
+        panel.add(this.balance.generarBalance(), BorderLayout.PAGE_START);
     
-            opcion = entrada.nextInt();
-            entrada.nextLine();  // Limpiar el buffer de entrada
+        JPanel pnlBotones = new JPanel();
+        pnlBotones.setLayout(new GridLayout(0, 2, 50, 50));
     
-            switch (opcion) {
-                case 1:
-                    gestorRegistros.mostrarTodosLosRegistros();
-                    break;
-                case 2:
-                    gestorRegistros.mostrarRegistrosPorTipo("Ingreso");
-                    break;
-                case 3:
-                    gestorRegistros.mostrarRegistrosPorTipo("Egreso");
-                    break;
-                case 4:
-                    gestorRegistros.mostrarRegistrosPorTipo("Transacción");
-                    break;
-                case 5:
-                    gestorRegistros.mostrarRegistrosPorFecha();
-                    break;                
-                case 6:
-                    System.out.println("Volviendo al Menú Principal...");
-                    break;
-                default:
-                    System.out.println("Opción no válida. Por favor, selecciona una opción válida.");
-            }
+        generarBoton("Ver Registros", e -> mostrarMenuRegistros(), pnlBotones);
+        generarBoton("Gestionar Cuentas", e -> mostrarMenuCuentas(), pnlBotones);
+        generarBoton("Gestionar Categorías", e -> mostrarMenuCategorias(), pnlBotones);
+        generarBoton("Agregar Registro", e -> gestorRegistros.agregarRegistro(), pnlBotones);
+        generarBoton("Generar Reporte", e -> generarReportes(), pnlBotones);
+        generarBoton("Configuración", e -> mostrarMenuConfiguracion(), pnlBotones);
+        generarBoton("Salir", e -> salirDelPrograma(), pnlBotones);
     
-        } while (opcion != 6);
+        panel.add(pnlBotones, BorderLayout.CENTER);
+        panel.revalidate();
+        panel.repaint();
     }
     
-    private static void mostrarMenuCuentas() {
-        int opcion;
-
-        do {
-            System.out.println("----- Menú de Gestionar Cuentas -----");
-            System.out.println("1. Ver Cuentas");
-            System.out.println("2. Agregar Cuenta");
-            System.out.println("3. Editar Cuenta");
-            System.out.println("4. Eliminar Cuenta");
-            System.out.println("5. Volver al Menú Principal");
-            System.out.print("Selecciona una opción (1-5): ");
-
-            opcion = entrada.nextInt();
-            entrada.nextLine();  // Limpiar el buffer de entrada
-
-            switch (opcion) {
-                case 1:
-                    gestorCuentas.mostrarCuentas();
-                    break;
-                case 2:
-                    gestorCuentas.agregarCuenta();
-                    break;
-                case 3:
-                    // Lógica para editar cuenta
-                    break;
-                case 4:
-                    // Lógica para eliminar cuenta
-                    break;
-                case 5:
-                    System.out.println("Volviendo al Menú Principal...");
-                    break;
-                default:
-                    System.out.println("Opción no válida. Por favor, selecciona una opción válida.");
-            }
-
-        } while (opcion != 5);
+    public void crearTopBarVolverMenuPrincipal(String nombreMenu) {
+        TopBar.crearTopBar(nombreMenu, e -> mostrarMenuPrincipal(), panel);
     }
 
-    private static void mostrarMenuConfiguracion() {
-        int opcion;
-
-        do {
-            System.out.println("----- Menú de Configuración -----");
-            System.out.println("1. Configurar Moneda Predeterminada");
-            System.out.println("2. Configurar Formato de Fecha");
-            System.out.println("3. Volver al Menú Principal");
-            System.out.print("Selecciona una opción (1-3): ");
-
-            opcion = entrada.nextInt();
-            entrada.nextLine();  // Limpiar el buffer de entrada
-
-            switch (opcion) {
-                case 1:
-                    // Lógica para configurar moneda
-                    break;
-                case 2:
-                    // Lógica para configurar formato de fecha
-                    break;
-                case 3:
-                    System.out.println("Volviendo al Menú Principal...");
-                    break;
-                default:
-                    System.out.println("Opción no válida. Por favor, selecciona una opción válida.");
-            }
-
-        } while (opcion != 3);
-    }
+    public void mostrarMenuCategorias() {
+        panel.removeAll();
+        panel.setLayout(new BorderLayout());
+        crearTopBarVolverMenuPrincipal("Menú de Categorías");
     
-    private static void generarReportes() {
+        JPanel pnlBotones = new JPanel();
+        pnlBotones.setLayout(new GridLayout(0, 2, 50, 50));
+    
+        generarBoton("Crear Categoría", e -> gestorCategorias.crearCategoria(), pnlBotones);
+        generarBoton("Modificar Categoría", e -> gestorCategorias.modificarCategoria(), pnlBotones);
+        generarBoton("Eliminar Categoría", e -> gestorCategorias.eliminarCategoria(), pnlBotones);
+        generarBoton("Ver Categorías", e -> gestorCategorias.mostrarCategorias(), pnlBotones);
+    
+        panel.add(pnlBotones, BorderLayout.CENTER);
+        panel.revalidate();
+        panel.repaint();
+    }    
+
+    public void mostrarMenuRegistros() {
+        panel.removeAll();
+        panel.setLayout(new BorderLayout());
+        crearTopBarVolverMenuPrincipal("Menú de Registros");
+    
+        JPanel pnlBotones = new JPanel();
+        pnlBotones.setLayout(new GridLayout(0, 2, 50, 50));
+    
+        generarBoton("Ver Todos los Registros", e -> gestorRegistros.mostrarTodosLosRegistros(), pnlBotones);
+        generarBoton("Ver Ingresos", e -> gestorRegistros.mostrarRegistrosPorTipo("Ingreso"), pnlBotones);
+        generarBoton("Ver Egresos", e -> gestorRegistros.mostrarRegistrosPorTipo("Egreso"), pnlBotones);
+        generarBoton("Ver Transferencias", e -> gestorRegistros.mostrarRegistrosPorTipo("Transaccion"), pnlBotones);
+        generarBoton("Ver Registros por Fecha", e -> gestorRegistros.mostrarRegistrosPorFecha(), pnlBotones);
+    
+        panel.add(pnlBotones, BorderLayout.CENTER);
+        panel.revalidate();
+        panel.repaint();
+    }
+
+    public void mostrarMenuCuentas() {
+        panel.removeAll();
+        panel.setLayout(new BorderLayout());
+        crearTopBarVolverMenuPrincipal("Menú de Cuentas");
+    
+        JPanel pnlBotones = new JPanel();
+        pnlBotones.setLayout(new GridLayout(0, 2, 50, 50));
+    
+        generarBoton("Ver Cuentas", e -> gestorCuentas.mostrarCuentas(), pnlBotones);
+        generarBoton("Agregar Cuenta", e -> gestorCuentas.agregarCuenta(), pnlBotones);
+        generarBoton("Editar Cuenta", e -> gestorCuentas.editarCuenta(), pnlBotones);
+        generarBoton("Eliminar Cuenta", e -> gestorCuentas.eliminarCuenta(), pnlBotones);
+    
+        panel.add(pnlBotones, BorderLayout.CENTER);
+        panel.revalidate();
+        panel.repaint();
+    }    
+
+    public void mostrarMenuConfiguracion() {
+        panel.removeAll();
+        panel.setLayout(new BorderLayout());
+        crearTopBarVolverMenuPrincipal("Menú de Configuración");
+    
+        JPanel pnlBotones = new JPanel();
+        pnlBotones.setLayout(new GridLayout(0, 2, 50, 50));
+    
+        generarBoton("Configurar Moneda Predeterminada", e -> configurarMoneda(), pnlBotones);
+        generarBoton("Configurar Formato de Fecha", e -> configurarFormatoFecha(), pnlBotones);
+    
+        panel.add(pnlBotones, BorderLayout.CENTER);
+        panel.revalidate();
+        panel.repaint();
+    }    
+
+    private void generarReportes() {
         // Lógica para generar reportes
+    }
+
+    private void configurarMoneda() {
+        // Lógica para configurar la moneda
+    }
+
+    private void configurarFormatoFecha() {
+        // Lógica para configurar el formato de la fecha
+    }
+
+    private void salirDelPrograma() {
+        ManejoArchivos.guardarDatos(registros, cuentas, categorias);
+        JOptionPane.showMessageDialog(null, "Saliendo de la aplicación. ¡Hasta luego!");
+        ventana.dispose();
     }
 }

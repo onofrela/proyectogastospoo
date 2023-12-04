@@ -30,11 +30,9 @@ public class Cuenta implements Serializable {
     public void actualizarBalance(double monto) {
         this.saldo += monto;
     }
-
     @Override
     public String toString() {
-        String linea = "Cuenta " + getNombre() + "\n";
-        linea += "\tSaldo = $" + saldo;
-        return linea;
-    }
+        String saldoFormateado = String.format("%.2f", saldo);
+        return "Cuenta: " + getNombre() + "\nSaldo: $" + saldoFormateado + "\n";
+    }    
 }

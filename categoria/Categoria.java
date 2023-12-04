@@ -1,13 +1,16 @@
 package categoria;
 
+import java.awt.Color;
 import java.io.Serializable;
+
+import javax.swing.ImageIcon;
 
 public class Categoria implements Serializable {
     private String nombre;
-    private String icono;
-    private String color;
+    private ImageIcon icono;
+    private Color color;
 
-    public Categoria(String nombre, String icono, String color) {
+    public Categoria(String nombre, ImageIcon icono, Color color) {
         this.nombre = nombre;
         this.icono = icono;
         this.color = color;
@@ -21,24 +24,25 @@ public class Categoria implements Serializable {
         this.nombre = nombre;
     }
 
-    public String getIcono() {
+    public ImageIcon getIcono() {
         return this.icono;
     }
 
-    public void setIcono(String icono) {
+    public void setIcono(ImageIcon icono) {
         this.icono = icono;
     }
 
-    public String getColor() {
+    public Color getColor() {
         return this.color;
     }
 
-    public void setColor(String color) {
+    public void setColor(Color color) {
         this.color = color;
     }
-    
+
     @Override
     public String toString(){
-        return getNombre();
+        return "Nombre: " + getNombre();
     }
+
 }

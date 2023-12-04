@@ -1,4 +1,4 @@
-package test.facade.componentes;
+package facade.componentes;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;

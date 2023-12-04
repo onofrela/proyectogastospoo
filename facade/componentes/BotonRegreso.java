@@ -1,4 +1,4 @@
-package test.facade.componentes;
+package facade.componentes;
 
 import java.awt.Dimension;
 import java.awt.event.ActionListener;

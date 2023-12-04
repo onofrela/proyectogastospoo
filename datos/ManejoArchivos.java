@@ -30,10 +30,7 @@ public class ManejoArchivos {
 
             registros.addAll((List<Registro>) objectIn.readObject());
             cuentas.addAll((List<Cuenta>) objectIn.readObject());
-
-            if (objectIn.available() > 0) {
-                categorias.addAll((List<Categoria>) objectIn.readObject());
-            }
+            categorias.addAll((List<Categoria>) objectIn.readObject());
 
             System.out.println("Datos cargados exitosamente desde archivos.");
         } catch (FileNotFoundException e) {
