@@ -18,6 +18,7 @@ public class App {
     
         panel = new JPanel();
         panel.setLayout(null);
+        panel.setBorder(BorderFactory.createEmptyBorder(50, 50, 50, 50));
         this.menu = new Menu(ventana, panel);
         ventana.add(panel);
     

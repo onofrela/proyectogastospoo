@@ -48,24 +48,32 @@ public class GestorRegistros {
     
     private String formatRegistroText(Registro registro) {
         return "<span style='font-family: Arial; font-size: 14pt; color: black;'>" + 
-                "Fecha: " + registro.getFecha() + "<br>" +
-                "Descripción: " + registro.getDescripcion()+ "<br>" +
-                "Monto: $" + registro.getMonto() + "</span>";
+                "Fecha: <span style='font-weight: 400;'>" + registro.getFecha() + "</span><br>" +
+                "Descripción: <span style='font-weight: 400;'>" + registro.getDescripcion()+ "</span><br>" +
+                "Monto: <span style='font-weight: 400;'>$" + registro.getMonto() + "</span></span>";
+    }
+    private String formatTitulo(String titulo) {
+        return "<div style='text-align: center;font-family: Arial; font-size: 14pt; color: black;'>"+titulo+"</div>";
     }
 
     public JPanel formatearRegistro(Registro registro){
+        String titulo;
         JPanel cartaRegistro = new JPanel(new FlowLayout());
-        JLabel textoRegistro = new JLabel("<html><div style='text-align: center;'>" + 
-                formatRegistroText(registro) + "</div></html>");
         if(registro instanceof Ingreso) {
             Ingreso ingreso = (Ingreso) registro;
             Categoria categoria = ingreso.getCategoria();
             cartaRegistro.add(gestorCategorias.generarIcono(categoria));
+            titulo = "Ingreso";
         }else if(registro instanceof Egreso) {
             Egreso egreso = (Egreso) registro;
             Categoria categoria = egreso.getCategoria();
             cartaRegistro.add(gestorCategorias.generarIcono(categoria));
+            titulo = "Egreso";
+        }else {
+            titulo = "Transferencia";
         }
+        JLabel textoRegistro = new JLabel("<html>" + formatTitulo(titulo) + "<br>" + "<div style='text-align: left;'>" + 
+                formatRegistroText(registro) + "</div></html>");
         cartaRegistro.add(textoRegistro);
         return cartaRegistro;
     }
@@ -113,13 +121,10 @@ public class GestorRegistros {
             TopBar.crearTopBar("Registros de tipo " + tipo, menuAVolver, panel);
             
             JPanel pnlRegistros = new JPanel(new GridLayout(0, 1));
-            JLabel textoRegistro;
             
             for (Registro registro : registros) {
                 if (registro.getClass().getSimpleName().equals(tipo)) {
-                    textoRegistro = new JLabel(registro.toString());
-                    textoRegistro.setHorizontalAlignment(SwingConstants.CENTER);
-                    pnlRegistros.add(textoRegistro);
+                    pnlRegistros.add(formatearRegistro(registro));
                 }
             }
             
@@ -170,8 +175,7 @@ public class GestorRegistros {
                     Date fechaRegistro = quitarTiempo(registro.getFecha());
                     fechaBusqueda = quitarTiempo(fechaBusqueda);
                     if (fechaRegistro != null && fechaRegistro.compareTo(fechaBusqueda) == 0) {
-                        JLabel labelRegistro = new JLabel(registro.toString());
-                        panelRegistros.add(labelRegistro);
+                        panelRegistros.add(formatearRegistro(registro));
                         registrosEncontrados = true;
                     }
                 }

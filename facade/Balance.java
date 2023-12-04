@@ -32,7 +32,6 @@ public class Balance {
         double saldoCuenta;
         String saldoFormateado, balanceCuenta;
         JLabel texto;
-    
         JPanel pnlBalance = new JPanel(new GridLayout(0, 1));
 
         if (!cuentas.isEmpty()) {
@@ -57,6 +56,10 @@ public class Balance {
         } else {
             pnlBalance.add(this.textoSinCuentas);
         }
+        JPanel gap = new JPanel();
+        gap.setSize(20, 20);
+        gap.setBackground(pnlBalance.getBackground());
+        pnlBalance.add(gap);
         return pnlBalance;
     }
 }

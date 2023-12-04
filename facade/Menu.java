@@ -77,9 +77,8 @@ public JButton generarBoton(String texto, ActionListener listener, JPanel panel)
         panel.setLayout(new BorderLayout());
     
         panel.add(this.balance.generarBalance(), BorderLayout.PAGE_START);
-    
         JPanel pnlBotones = new JPanel();
-        pnlBotones.setLayout(new GridLayout(0, 2, 50, 50));
+        pnlBotones.setLayout(new GridLayout(0, 2, 50, 30));
     
         generarBoton("Ver Registros", e -> mostrarMenuRegistros(), pnlBotones);
         generarBoton("Gestionar Cuentas", e -> mostrarMenuCuentas(), pnlBotones);
