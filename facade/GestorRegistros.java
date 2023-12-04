@@ -51,7 +51,7 @@ public class GestorRegistros {
     
     private String formatRegistroText(Registro registro) {
         return "<span style='font-family: Arial; font-size: 14pt; color: black;'>" + 
-                "Fecha: <span style='font-weight: 400;'>" + registro.obtenerFecha() + "</span><br>" +
+                "Fecha: <span style='font-weight: 400;'>" + registro.getFecha().obtenerFecha() + "</span><br>" +
                 "Descripción: <span style='font-weight: 400;'>" + registro.getDescripcion()+ "</span><br>" +
                 "Monto: <span style='font-weight: 400;'>" + registro.getMontoFormateado() + "</span></span>";
     }
@@ -179,7 +179,7 @@ public class GestorRegistros {
                 boolean registrosEncontrados = false;
 
                 for (Registro registro : registros) {
-                    LocalDateTime fechaRegistro = quitarTiempo(registro.getFecha());
+                    LocalDateTime fechaRegistro = quitarTiempo(registro.getFecha().getFecha());
                     fechaBusqueda = quitarTiempo(fechaBusqueda);
                     if (fechaRegistro != null && fechaRegistro.compareTo(fechaBusqueda) == 0) {
                         panelRegistros.add(formatearRegistro(registro));

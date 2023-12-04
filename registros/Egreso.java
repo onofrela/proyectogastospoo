@@ -1,8 +1,9 @@
 package registros;
-import java.time.LocalDateTime;
 
 import cuentas.Cuenta;
 import facade.Configuracion;
+import java.time.LocalDateTime;
+
 import categoria.Categoria;
 
 public class Egreso extends Registro {

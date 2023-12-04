@@ -44,6 +44,7 @@ public class Menu {
         gestorCategorias = new GestorCategorias(categorias, e -> mostrarMenuCategorias(), panel);
         gestorRegistros = new GestorRegistros(gestorCategorias, gestorCuentas, registros, panel, e -> mostrarMenuRegistros(), configuracion);
         gestorMonedas = new GestorMonedas(panel, e -> mostrarMenuConfiguracion(), configuracion);
+        gestorFechas = new GestorFechas(panel, e -> mostrarMenuConfiguracion(), configuracion);
     }
 
     public JButton generarBoton(String texto, ActionListener listener, JPanel panel) {

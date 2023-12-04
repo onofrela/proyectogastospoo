@@ -2,8 +2,10 @@ package registros;
 
 import cuentas.Cuenta;
 import facade.Configuracion;
-import categoria.Categoria;
+
 import java.time.LocalDateTime;
+
+import categoria.Categoria;
 
 public class Ingreso extends Registro {
     private Categoria categoria;
