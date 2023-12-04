@@ -7,7 +7,9 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 
 import cuentas.Cuenta;
+import facade.componentes.BotonCancelar;
 import facade.componentes.TopBar;
+import facade.estilos.Estilos;
 import monto.Monto;;
 
 public class GestorCuentas {
@@ -77,7 +79,9 @@ public class GestorCuentas {
             JPanel pnlCuentas = new JPanel(new GridLayout(0, 1));
 
             for (Cuenta cuenta : cuentas) {
+                
                 JButton button = new JButton(cuenta.toString());
+                Estilos.estilizarBoton(button);
                 button.putClientProperty("cuenta", cuenta); // Asociar la cuenta con el botón
                 button.addActionListener(accion); // Asociar el listener al botón
                 pnlCuentas.add(button);
@@ -107,6 +111,7 @@ public class GestorCuentas {
         pnlCuenta.add(txtSaldo);
 
         JButton btnAgregar = new JButton("Agregar");
+        Estilos.estilizarBoton(btnAgregar);
         btnAgregar.addActionListener(e -> {
             // Obtener los valores ingresados por el usuario
             String nuevoNombre = txtNombreCuenta.getText();
@@ -128,12 +133,9 @@ public class GestorCuentas {
             menuAVolver.actionPerformed(null);
         });
 
-        JButton btnCancelar = new JButton("Cancelar");
-        btnCancelar.addActionListener(e -> menuAVolver.actionPerformed(null));
-
         JPanel pnlBotones = new JPanel(new GridLayout(1, 2));
         pnlBotones.add(btnAgregar);
-        pnlBotones.add(btnCancelar);
+        pnlBotones.add(BotonCancelar.crearBoton(menuAVolver));
 
         panel.add(pnlCuenta, BorderLayout.CENTER);
         panel.add(pnlBotones, BorderLayout.SOUTH);
@@ -169,6 +171,7 @@ public class GestorCuentas {
         pnlCuenta.add(txtSaldo);
     
         JButton btnModificar = new JButton("Modificar");
+        Estilos.estilizarBoton(btnModificar);
         btnModificar.addActionListener(e -> {
             // Obtener los nuevos valores y actualizar la cuenta
             String nuevoNombre = txtNombreCuenta.getText();
@@ -190,12 +193,9 @@ public class GestorCuentas {
             menuAVolver.actionPerformed(null);
         });
     
-        JButton btnCancelar = new JButton("Cancelar");
-        btnCancelar.addActionListener(e -> menuAVolver.actionPerformed(null));
-    
         JPanel pnlBotones = new JPanel(new GridLayout(1, 2));
         pnlBotones.add(btnModificar);
-        pnlBotones.add(btnCancelar);
+        pnlBotones.add(BotonCancelar.crearBoton(menuAVolver));
     
         panel.add(pnlCuenta, BorderLayout.CENTER);
         panel.add(pnlBotones, BorderLayout.SOUTH);
@@ -207,6 +207,7 @@ public class GestorCuentas {
         if (existenCuentas()) 
             elegirCuenta(e -> {
                 JButton button = (JButton) e.getSource();
+                Estilos.estilizarBoton(button);
                 cuentaSeleccionada = (Cuenta) button.getClientProperty("cuenta");
                 editarDatos();
             });
@@ -214,6 +215,7 @@ public class GestorCuentas {
 
     private ActionListener borrarCuenta = e -> {
         JButton button = (JButton) e.getSource();
+        Estilos.estilizarBoton(button);
         cuentaSeleccionada = (Cuenta) button.getClientProperty("cuenta");
         
         int opcion = JOptionPane.showConfirmDialog(null, "¿Estás seguro de eliminar la cuenta?", "Confirmar eliminación", JOptionPane.YES_NO_OPTION);

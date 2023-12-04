@@ -15,7 +15,9 @@ import registros.Egreso;
 import registros.Ingreso;
 import registros.Registro;
 import registros.Transaccion;
+import facade.componentes.BotonCancelar;
 import facade.componentes.TopBar;
+import facade.estilos.Estilos;
 
 public class GestorRegistros {
     private GestorCuentas gestorCuentas;
@@ -149,7 +151,11 @@ public class GestorRegistros {
         JTextField txtMes = new JTextField();
         JTextField txtAnio = new JTextField();
 
-        JButton btnBuscar = new JButton("Buscar");
+        
+        java.net.URL imgURL = getClass().getResource("./componentes/iconos/search.png");
+        ImageIcon icono = new ImageIcon(imgURL);
+        JButton btnBuscar = new JButton(icono);
+        Estilos.estilizarBoton(btnBuscar);
         btnBuscar.addActionListener(e -> {
             panelRegistros.removeAll();
             String dia = txtDia.getText();
@@ -233,6 +239,9 @@ public class GestorRegistros {
         JButton btnIngreso = new JButton("Agregar Ingreso");
         JButton btnEgreso = new JButton("Agregar Egreso");
         JButton btnTransferencia = new JButton("Agregar Transferencia");
+        Estilos.estilizarBoton(btnIngreso);
+        Estilos.estilizarBoton(btnEgreso);
+        Estilos.estilizarBoton(btnTransferencia);
     
         // Acción al elegir Ingreso
         btnIngreso.addActionListener(e -> {
@@ -328,8 +337,7 @@ public class GestorRegistros {
         }
 
         JButton btnAgregarRegistro = new JButton("Agregar");
-        JButton btnCancelar = new JButton("Cancelar");
-
+        Estilos.estilizarBoton(btnAgregarRegistro);
         btnAgregarRegistro.addActionListener(e -> {
             String descripcion = txtDescripcion.getText();
             double monto = Double.parseDouble(txtMonto.getText());
@@ -369,10 +377,8 @@ public class GestorRegistros {
             }
         });
     
-        btnCancelar.addActionListener(e -> menuAVolver.actionPerformed(null));
-    
         panelFormulario.add(btnAgregarRegistro);
-        panelFormulario.add(btnCancelar);
+        panelFormulario.add(BotonCancelar.crearBoton(menuAVolver));
     
         panel.add(panelFormulario, BorderLayout.CENTER);
         panel.revalidate();

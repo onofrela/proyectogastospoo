@@ -9,8 +9,10 @@ import javax.swing.*;
 import java.awt.*;
 
 import categoria.Categoria;
+import facade.componentes.BotonCancelar;
 import facade.componentes.TopBar;
 import facade.componentes.colores.Colores;
+import facade.estilos.Estilos;
 
 public class GestorCategorias {
     private List<Categoria> categorias;
@@ -121,9 +123,11 @@ public class GestorCategorias {
     
         JLabel lblIcono = new JLabel("Icono:");
         JButton btnSeleccionarIcono = new JButton("Seleccionar Icono");
+        Estilos.estilizarBoton(btnSeleccionarIcono);
     
         JLabel lblColor = new JLabel("Color:");
         JButton btnSeleccionarColor = new JButton("Seleccionar Color");
+        Estilos.estilizarBoton(btnSeleccionarColor);
     
         pnlCategoria.add(lblNombreCategoria);
         pnlCategoria.add(txtNombreCategoria);
@@ -144,6 +148,7 @@ public class GestorCategorias {
         });
     
         JButton btnAgregar = new JButton("Agregar");
+        Estilos.estilizarBoton(btnAgregar);
         btnAgregar.addActionListener(e -> {
             // Obtener los valores ingresados por el usuario
             String nuevoNombre = txtNombreCategoria.getText();
@@ -165,12 +170,9 @@ public class GestorCategorias {
             menuAVolver.actionPerformed(null);
         });
     
-        JButton btnCancelar = new JButton("Cancelar");
-        btnCancelar.addActionListener(e -> menuAVolver.actionPerformed(null));
-    
         JPanel pnlBotones = new JPanel(new GridLayout(1, 2));
         pnlBotones.add(btnAgregar);
-        pnlBotones.add(btnCancelar);
+        pnlBotones.add(BotonCancelar.crearBoton(menuAVolver));
     
         panel.add(pnlCategoria, BorderLayout.CENTER);
         panel.add(pnlBotones, BorderLayout.SOUTH);
@@ -200,6 +202,7 @@ public class GestorCategorias {
         if (existenCategorias()) {
             elegirCategoria(e -> {
                 JButton button = (JButton) e.getSource();
+                Estilos.estilizarBoton(button);
                 categoriaSeleccionada = (Categoria) button.getClientProperty("categoria");
                 iconoSeleccionado = categoriaSeleccionada.getIcono();
                 colorSeleccionado = categoriaSeleccionada.getColor();
@@ -222,6 +225,8 @@ public class GestorCategorias {
         JTextField txtNombreCategoria = new JTextField(categoriaSeleccionada.getNombre());
         JButton btnSeleccionarIcono = new JButton("Seleccionar Icono");
         JButton btnSeleccionarColor = new JButton("Seleccionar Color");
+        Estilos.estilizarBoton(btnSeleccionarIcono);
+        Estilos.estilizarBoton(btnSeleccionarColor);
     
         pnlCategoria.add(lblNombreCategoria);
         pnlCategoria.add(txtNombreCategoria);
@@ -249,6 +254,7 @@ public class GestorCategorias {
         });
     
         JButton btnModificar = new JButton("Modificar");
+        Estilos.estilizarBoton(btnModificar);
         btnModificar.addActionListener(e -> {
             // Obtener los nuevos valores y actualizar la categoría
             String nuevoNombre = txtNombreCategoria.getText();
@@ -271,12 +277,9 @@ public class GestorCategorias {
             menuAVolver.actionPerformed(null);
         });
     
-        JButton btnCancelar = new JButton("Cancelar");
-        btnCancelar.addActionListener(e -> menuAVolver.actionPerformed(null));
-    
         JPanel pnlBotones = new JPanel(new GridLayout(1, 2));
         pnlBotones.add(btnModificar);
-        pnlBotones.add(btnCancelar);
+        pnlBotones.add(BotonCancelar.crearBoton(menuAVolver));
     
         panel.add(pnlCategoria, BorderLayout.CENTER);
         panel.add(pnlBotones, BorderLayout.SOUTH);
@@ -290,10 +293,11 @@ public class GestorCategorias {
             panel.setLayout(new BorderLayout());
             TopBar.crearTopBar("Categorías", menuAVolver, panel);
     
-            JPanel pnlCategorias = new JPanel(new GridLayout(0, 1));
+            JPanel pnlCategorias = new JPanel(new GridLayout(0, 1, 10, 10));
     
             for (Categoria categoria : categorias) {
                 JButton button = new JButton(categoria.toString());
+                Estilos.estilizarBoton(button);
                 button.putClientProperty("categoria", categoria); // Asociar la categoría con el botón
                 button.addActionListener(accion); // Asociar el listener al botón
                 pnlCategorias.add(button);
