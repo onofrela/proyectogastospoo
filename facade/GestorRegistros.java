@@ -17,6 +17,7 @@ import facade.componentes.TopBar;
 import facade.estilos.Estilos;
 
 public class GestorRegistros {
+    private static final Cuenta cuentaSeleccionada = null;
     private GestorCuentas gestorCuentas;
     private GestorCategorias gestorCategorias;
     private List<Cuenta> cuentas;
@@ -262,6 +263,87 @@ public class GestorRegistros {
         panel.repaint();
     }
     
+    public JComboBox<String> crearListaCategorias(){
+        JComboBox<String> listaCategorias = new JComboBox<>();
+
+        if (categorias.isEmpty()) {
+            listaCategorias.addItem("Sin categoría");
+            listaCategorias.setEnabled(false);
+        } else {
+            for (Categoria categoria : categorias) {
+                listaCategorias.addItem(categoria.getNombre());
+            }
+        }
+        return listaCategorias;
+    }
+
+    public JComboBox<String> crearListaCuentas(){
+        JComboBox<String> listaCuentas = new JComboBox<>();
+
+        if (cuentas.isEmpty()) {
+            listaCuentas.addItem("No hay cuentas disponibles");
+            listaCuentas.setEnabled(false);
+        } else {
+            for (Cuenta cuenta : cuentas) {
+                listaCuentas.addItem(cuenta.getNombre());
+            }
+        }
+        return listaCuentas;
+    }
+
+    private void generarIngreso(String descripcion, double monto, Categoria categoriaSeleccionada, Cuenta cuentaSeleccionada){
+        Ingreso ingreso = new Ingreso.IngresoBuilder()
+            .withFecha(LocalDateTime.now())
+            .withDescripcion(descripcion)
+            .withMonto(monto)
+            .withConfiguracion(this.configuracion)
+            .withCategoria(categoriaSeleccionada)
+            .withCuentaAsociada(cuentaSeleccionada)
+            .build();
+        registros.add(ingreso);
+        cuentaSeleccionada.actualizarBalance(monto);
+        menuAVolver.actionPerformed(null);
+    }
+
+    private void generarEgreso(String descripcion, double monto, Categoria categoriaSeleccionada, Cuenta cuentaSeleccionada){
+        Egreso egreso = new Egreso.EgresoBuilder()
+            .withFecha(LocalDateTime.now())
+            .withDescripcion(descripcion)
+            .withMonto(monto)
+            .withConfiguracion(this.configuracion)
+            .withCategoria(categoriaSeleccionada)
+            .withCuentaAsociada(cuentaSeleccionada)
+            .build();
+        registros.add(egreso);
+        cuentaSeleccionada.actualizarBalance(-monto);
+        menuAVolver.actionPerformed(null);
+    }
+    private void generarTransferencia(String descripcion, double monto, JComboBox<String> listaCuentaOrigen, JComboBox<String> listaCuentaDestino){
+        Cuenta cuentaOrigen = cuentas.isEmpty() ? null : cuentas.get(listaCuentaOrigen.getSelectedIndex());
+        Cuenta cuentaDestino = cuentas.isEmpty() ? null : cuentas.get(listaCuentaDestino.getSelectedIndex());
+        if (cuentaOrigen != cuentaDestino) {
+            double saldoOrigen = cuentaOrigen.getSaldo();
+            if (saldoOrigen >= monto) {
+                Transaccion transaccion = new Transaccion.TransaccionBuilder()
+                    .withFecha(LocalDateTime.now())
+                    .withDescripcion(descripcion)
+                    .withMonto(monto)
+                    .withConfiguracion(this.configuracion)
+                    .withCuentaOrigen(cuentaOrigen)
+                    .withCuentaDestino(cuentaDestino)
+                    .build();
+                registros.add(transaccion);
+                cuentaOrigen.actualizarBalance(-monto);
+                cuentaDestino.actualizarBalance(monto);
+                menuAVolver.actionPerformed(null);
+            } else {
+                JOptionPane.showMessageDialog(null, "Error: La cuenta de origen no tiene fondos suficientes para realizar la transferencia.");
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "Error: Seleccione distintas cuentas para hacer válida la transferencia.");
+        }
+    }
+
     public void mostrarFormularioRegistro(String tipoRegistro) {
         panel.removeAll();
         panel.setLayout(new BorderLayout());
@@ -278,42 +360,10 @@ public class GestorRegistros {
         panelFormulario.add(new JLabel("Monto:"));
         panelFormulario.add(txtMonto);
 
-        JComboBox<String> listaCategorias = new JComboBox<>();
-
-        if (categorias.isEmpty()) {
-            listaCategorias.addItem("Sin categoría");
-            listaCategorias.setEnabled(false);
-        } else {
-            for (Categoria categoria : categorias) {
-                listaCategorias.addItem(categoria.getNombre());
-            }
-        }
-
-        JComboBox<String> listaCuentas = new JComboBox<>();
-
-        if (cuentas.isEmpty()) {
-            listaCuentas.addItem("No hay cuentas disponibles");
-            listaCuentas.setEnabled(false);
-        } else {
-            for (Cuenta cuenta : cuentas) {
-                listaCuentas.addItem(cuenta.getNombre());
-            }
-        }
-
-        JComboBox<String> listaCuentaOrigen = new JComboBox<>();
-        JComboBox<String> listaCuentaDestino = new JComboBox<>();
-
-        if (cuentas.isEmpty()) {
-            listaCuentaOrigen.addItem("No hay cuentas disponibles");
-            listaCuentaDestino.addItem("No hay cuentas disponibles");
-            listaCuentaOrigen.setEnabled(false);
-            listaCuentaDestino.setEnabled(false);
-        } else {
-            for (Cuenta cuenta : cuentas) {
-                listaCuentaOrigen.addItem(cuenta.getNombre());
-                listaCuentaDestino.addItem(cuenta.getNombre());
-            }
-        }
+        JComboBox<String> listaCategorias = crearListaCategorias();
+        JComboBox<String> listaCuentas = crearListaCuentas();
+        JComboBox<String> listaCuentaOrigen = crearListaCuentas();
+        JComboBox<String> listaCuentaDestino = crearListaCuentas();
 
         if (tipoRegistro.equals("Ingreso") || tipoRegistro.equals("Egreso")) {
             panelFormulario.add(new JLabel("Categoría:"));
@@ -326,45 +376,22 @@ public class GestorRegistros {
             panelFormulario.add(new JLabel("Cuenta Destino:"));
             panelFormulario.add(listaCuentaDestino);
         }
-
+        
         JButton btnAgregarRegistro = new JButton("Agregar");
         Estilos.estilizarBoton(btnAgregarRegistro);
         btnAgregarRegistro.addActionListener(e -> {
             String descripcion = txtDescripcion.getText();
             double monto = Double.parseDouble(txtMonto.getText());
     
-            Categoria categoriaSeleccionada = categorias.isEmpty() ? gestorCategorias.sinCategoria() : categorias.get(listaCategorias.getSelectedIndex());
+            Categoria categoriaSeleccionada = categorias.isEmpty() ? null : categorias.get(listaCategorias.getSelectedIndex());
             Cuenta cuentaSeleccionada = cuentas.isEmpty() ? null : cuentas.get(listaCuentas.getSelectedIndex());
     
             if (tipoRegistro.equals("Ingreso")) {
-                Ingreso ingreso = new Ingreso(LocalDateTime.now(), descripcion, monto, this.configuracion, categoriaSeleccionada, cuentaSeleccionada);
-                registros.add(ingreso);
-                cuentaSeleccionada.actualizarBalance(monto);
-                menuAVolver.actionPerformed(null);
+                generarIngreso(descripcion, monto, categoriaSeleccionada, cuentaSeleccionada);
             } else if (tipoRegistro.equals("Egreso")) {
-                Egreso egreso = new Egreso(LocalDateTime.now(), descripcion, monto, this.configuracion, categoriaSeleccionada, cuentaSeleccionada);
-                registros.add(egreso);
-                cuentaSeleccionada.actualizarBalance(-monto);
-                menuAVolver.actionPerformed(null);
+                generarEgreso(descripcion, monto, categoriaSeleccionada, cuentaSeleccionada);
             }  else if (tipoRegistro.equals("Transferencia")) {
-                Cuenta cuentaOrigen = cuentas.isEmpty() ? null : cuentas.get(listaCuentaOrigen.getSelectedIndex());
-                Cuenta cuentaDestino = cuentas.isEmpty() ? null : cuentas.get(listaCuentaDestino.getSelectedIndex());
-                if (cuentaOrigen != cuentaDestino) {
-                    double saldoOrigen = cuentaOrigen.getSaldo();
-                    double montoTransferencia = Double.parseDouble(txtMonto.getText());
-                    if (saldoOrigen >= montoTransferencia) {
-                        Transaccion transaccion = new Transaccion(LocalDateTime.now(), descripcion, montoTransferencia, this.configuracion, cuentaOrigen, cuentaDestino);
-                        registros.add(transaccion);
-        
-                        cuentaOrigen.actualizarBalance(-montoTransferencia);
-                        cuentaDestino.actualizarBalance(montoTransferencia);
-                        menuAVolver.actionPerformed(null);
-                    } else {
-                        JOptionPane.showMessageDialog(null, "Error: La cuenta de origen no tiene fondos suficientes para realizar la transferencia.");
-                    }
-                } else {
-                    JOptionPane.showMessageDialog(null, "Error: Seleccione distintas cuentas para hacer válida la transferencia.");
-                }
+                generarTransferencia(descripcion, monto, listaCuentaOrigen, listaCuentaDestino);
             }
         });
     

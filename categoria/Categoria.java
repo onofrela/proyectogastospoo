@@ -5,6 +5,8 @@ import java.io.Serializable;
 
 import javax.swing.ImageIcon;
 
+import builder.BuilderCategoria;
+
 public class Categoria implements Serializable {
     private String nombre;
     private ImageIcon icono;
@@ -44,5 +46,33 @@ public class Categoria implements Serializable {
     public String toString(){
         return "Nombre: " + getNombre();
     }
+    
+    public static class CategoriaBuilder implements BuilderCategoria {
+        private String nombre;
+        private ImageIcon icono;
+        private Color color;
 
+        public CategoriaBuilder withNombre(String nombre) {
+            this.nombre = nombre;
+            return this;
+        }
+
+        public CategoriaBuilder withIcono(ImageIcon icono) {
+            this.icono = icono;
+            return this;
+        }
+
+        public CategoriaBuilder withColor(Color color) {
+            this.color = color;
+            return this;
+        }
+
+        public Categoria build() {
+            if (nombre == null || icono == null || color == null) {
+                throw new IllegalStateException("Nombre, Icono y Color son campos requeridos.");
+            }
+
+            return new Categoria(nombre, icono, color);
+        }
+    }
 }

@@ -2,7 +2,6 @@ package facade;
 
 import java.util.List;
 import javax.swing.*;
-
 import java.awt.*;
 import java.awt.event.ActionListener;
 
@@ -79,7 +78,6 @@ public class GestorCuentas {
             JPanel pnlCuentas = new JPanel(new GridLayout(0, 1));
 
             for (Cuenta cuenta : cuentas) {
-
                 JButton button = new JButton(cuenta.toString());
                 Estilos.estilizarBoton(button);
                 button.putClientProperty("cuenta", cuenta);
@@ -121,7 +119,11 @@ public class GestorCuentas {
                 return;
             }
 
-            Cuenta nuevaCuenta = new Cuenta(nuevoNombre, nuevoSaldo, this.configuracion);
+            Cuenta nuevaCuenta = new Cuenta.CuentaBuilder()
+                                    .withNombre(nuevoNombre)
+                                    .withSaldo(nuevoSaldo)
+                                    .withConfiguracion(configuracion)
+                                    .build();
             cuentas.add(nuevaCuenta);
 
             JOptionPane.showMessageDialog(null, "Cuenta agregada con éxito.", "Éxito", JOptionPane.INFORMATION_MESSAGE);

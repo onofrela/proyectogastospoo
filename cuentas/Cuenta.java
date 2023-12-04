@@ -1,6 +1,7 @@
 package cuentas;
 import java.io.Serializable;
 
+import builder.BuilderCuenta;
 import facade.Configuracion;
 import monto.Monto;
 
@@ -41,4 +42,33 @@ public class Cuenta implements Serializable {
     public String toString() {
         return "Cuenta: " + getNombre() + "\nSaldo: $" + this.saldo + "\n";
     }    
+
+    public static class CuentaBuilder implements BuilderCuenta {
+        private String nombre;
+        private double saldo = 0; // Valor predeterminado
+        private Configuracion configuracion;
+
+        public CuentaBuilder withNombre(String nombre) {
+            this.nombre = nombre;
+            return this;
+        }
+
+        public CuentaBuilder withSaldo(double saldo) {
+            this.saldo = saldo;
+            return this;
+        }
+
+        public CuentaBuilder withConfiguracion(Configuracion configuracion) {
+            this.configuracion = configuracion;
+            return this;
+        }
+
+        public Cuenta build() {
+            if (nombre == null || configuracion == null) {
+                throw new IllegalStateException("Nombre y Configuracion son campos requeridos.");
+            }
+
+            return new Cuenta(nombre, saldo, configuracion);
+        }
+    }
 }

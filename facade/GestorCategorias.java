@@ -9,6 +9,7 @@ import javax.swing.*;
 import java.awt.*;
 
 import categoria.Categoria;
+import categoria.Categoria.CategoriaBuilder;
 import facade.componentes.BotonCancelar;
 import facade.componentes.TopBar;
 import facade.componentes.colores.Colores;
@@ -32,13 +33,7 @@ public class GestorCategorias {
         this.categorias = categorias;
         this.menuAVolver = menuAVolver;
         this.panel = panel;
-        java.net.URL imgURL = getClass().getResource("/categoria/iconos/unknown.png");
-        ImageIcon icono = new ImageIcon(imgURL);
         this.colores = Colores.obtenerColores();
-
-        this.categoriaNula = new Categoria("Sin Categoria", icono, Color.WHITE);
-        this.colorSeleccionado = Color.RED;
-        this.iconoSeleccionado = new ImageIcon(getClass().getResource("/categoria/iconos/box.png"));
     }
 
     public Categoria sinCategoria() {
@@ -189,8 +184,12 @@ public class GestorCategorias {
                 JOptionPane.showMessageDialog(null, "¡La categoría ya existe!", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-    
-            Categoria nuevaCategoria = new Categoria(nuevoNombre, iconoSeleccionado, colorSeleccionado);
+        
+            Categoria nuevaCategoria = new CategoriaBuilder()
+                                            .withNombre(nuevoNombre)
+                                            .withIcono(iconoSeleccionado)
+                                            .withColor(colorSeleccionado)
+                                            .build();
             categorias.add(nuevaCategoria);
     
             JOptionPane.showMessageDialog(null, "Categoría creada con éxito.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
