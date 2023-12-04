@@ -349,18 +349,32 @@ public class GestorCategorias {
 
         return panelIconoColor;
     }
-    
+
     private JPanel generarPanelCategoria(Categoria categoria) {
-        JPanel panelCategoria = new JPanel(new BorderLayout());
-        JLabel nombreCategoria = new JLabel(categoria.getNombre());
-    
         // Crear el ícono
-        JPanel panelIconoColor = generarIcono(categoria);
-    
-        // Agregar el ícono con el color al panel de la categoría
-        panelCategoria.add(panelIconoColor, BorderLayout.WEST);
+        JPanel panelCategoria = new JPanel();
+        panelCategoria.setPreferredSize(new Dimension(240, 60));
+        panelCategoria.setLayout(new BorderLayout());
+
+        JPanel panelIcono = new JPanel(new GridBagLayout());
+        panelIcono.setPreferredSize(new Dimension(60, 60));
+        
+        JPanel icono = generarIcono(categoria);
+        
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.CENTER;
+        
+        panelIcono.add(icono, gbc);
+
+        JLabel nombreCategoria = new JLabel(categoria.getNombre());
+        nombreCategoria.setVerticalAlignment(SwingConstants.CENTER);
+        nombreCategoria.setHorizontalAlignment(SwingConstants.LEFT);
+        nombreCategoria.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0)); // Agrega un margen a la izquierda del texto
+
+        panelCategoria.add(panelIcono, BorderLayout.WEST);
         panelCategoria.add(nombreCategoria, BorderLayout.CENTER);
-    
         return panelCategoria;
     }
     
@@ -370,7 +384,8 @@ public class GestorCategorias {
             panel.setLayout(new BorderLayout());
             TopBar.crearTopBar("Categorías", menuAVolver, panel);
     
-            JPanel pnlCategorias = new JPanel(new GridLayout(0, 1));
+            JPanel pnlCategorias = new JPanel();
+            pnlCategorias.setLayout(new BoxLayout(pnlCategorias, BoxLayout.Y_AXIS));
     
             for (Categoria categoria : categorias) {
                 JPanel panelCategoria = generarPanelCategoria(categoria);
@@ -384,5 +399,4 @@ public class GestorCategorias {
             panel.repaint();
         }
     }
-    
 }
