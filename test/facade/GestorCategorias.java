@@ -1,44 +1,96 @@
 package test.facade;
 
+import java.awt.event.ActionListener;
 import java.util.List;
-import java.util.Scanner;
+
+import javax.swing.*;
+import java.awt.*;
 
 import categoria.Categoria;
+import test.facade.componentes.TopBar;
 
 public class GestorCategorias {
     private List<Categoria> categorias;
-    private Scanner entrada;
-    
-    public GestorCategorias(List<Categoria> categorias, Scanner entrada){
+    private ActionListener menuAVolver;
+    private JPanel panel;
+    private Categoria categoriaSeleccionada;
+    public Categoria categoriaNula;
+
+    public GestorCategorias(List<Categoria> categorias, ActionListener menuAVolver, JPanel panel) {
         this.categorias = categorias;
-        this.entrada = entrada;
-    }
-    public GestorCategorias(List<Categoria> categorias ){
-        this.categorias = categorias;
-        this.entrada = new Scanner(System.in);
+        this.menuAVolver = menuAVolver;
+        this.panel = panel;
+        this.categoriaNula = new Categoria("Sin Categoria", "?", "Blanco");
     }
 
-    public void crearCategoria() {
-        System.out.print("Nombre de la categoría: ");
-        String nombreCategoria = entrada.nextLine();
-    
-        // Verificar si ya existe una categoría con ese nombre
-        if (existeCategoria(nombreCategoria)) {
-            System.out.println("¡La categoría ya existe!");
-            return;
-        }
-    
-        System.out.print("Icono: ");
-        String iconoCategoria = entrada.nextLine();
-        System.out.print("Color: ");
-        String colorCategoria = entrada.nextLine();
-    
-        Categoria nuevaCategoria = new Categoria(nombreCategoria, iconoCategoria, colorCategoria);
-        categorias.add(nuevaCategoria);
-        System.out.println("Categoría creada con éxito.");
+    public Categoria sinCategoria() {
+        return categoriaNula;
+    }
+
+    public List<Categoria> getCategorias(){
+        return this.categorias;
     }
     
-    public boolean existeCategoria(String nombre) {
+    public void crearCategoria() {
+        panel.removeAll();
+        panel.setLayout(new BorderLayout());
+        TopBar.crearTopBar("Crear nueva categoría", e -> menuAVolver.actionPerformed(null), panel);
+
+        JPanel pnlCategoria = new JPanel(new GridLayout(3, 2));
+
+        JLabel lblNombreCategoria = new JLabel("Nombre de la categoría:");
+        JTextField txtNombreCategoria = new JTextField();
+
+        JLabel lblIcono = new JLabel("Icono:");
+        JTextField txtIcono = new JTextField();
+
+        JLabel lblColor = new JLabel("Color:");
+        JTextField txtColor = new JTextField();
+
+        pnlCategoria.add(lblNombreCategoria);
+        pnlCategoria.add(txtNombreCategoria);
+        pnlCategoria.add(lblIcono);
+        pnlCategoria.add(txtIcono);
+        pnlCategoria.add(lblColor);
+        pnlCategoria.add(txtColor);
+
+        JButton btnAgregar = new JButton("Agregar");
+        btnAgregar.addActionListener(e -> {
+            // Obtener los valores ingresados por el usuario
+            String nuevoNombre = txtNombreCategoria.getText();
+            String nuevoIcono = txtIcono.getText();
+            String nuevoColor = txtColor.getText();
+
+            // Verificar si ya existe una categoría con ese nombre
+            if (existeCategoria(nuevoNombre)) {
+                JOptionPane.showMessageDialog(null, "¡La categoría ya existe!", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            // Crear una nueva categoría y agregarla a la lista
+            Categoria nuevaCategoria = new Categoria(nuevoNombre, nuevoIcono, nuevoColor);
+            categorias.add(nuevaCategoria);
+
+            JOptionPane.showMessageDialog(null, "Categoría creada con éxito.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+
+            // Volver al menú principal
+            menuAVolver.actionPerformed(null);
+        });
+
+        JButton btnCancelar = new JButton("Cancelar");
+        btnCancelar.addActionListener(e -> menuAVolver.actionPerformed(null));
+
+        JPanel pnlBotones = new JPanel(new GridLayout(1, 2));
+        pnlBotones.add(btnAgregar);
+        pnlBotones.add(btnCancelar);
+
+        panel.add(pnlCategoria, BorderLayout.CENTER);
+        panel.add(pnlBotones, BorderLayout.SOUTH);
+        panel.revalidate();
+        panel.repaint();
+    }
+
+    private boolean existeCategoria(String nombre) {
         for (Categoria categoria : categorias) {
             if (categoria.getNombre().equalsIgnoreCase(nombre)) {
                 return true;
@@ -46,93 +98,140 @@ public class GestorCategorias {
         }
         return false;
     }    
-    
-    public void modificarCategoria() {
-        System.out.print("Ingrese el nombre de la categoría a modificar: ");
-        String nombreCategoria = entrada.nextLine();
-    
-        Categoria categoriaExistente = obtenerCategoriaPorNombre(nombreCategoria);
-        if (categoriaExistente == null) {
-            System.out.println("¡La categoría no existe!");
-            return;
+
+    private boolean existenCategorias() {
+        if (categorias.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "No existen categorías. Por favor, primero agrega una categoría.", "Categorías no existentes", JOptionPane.WARNING_MESSAGE);
+            return false;
+        } else {
+            return true;
         }
+    }
+
+    public void modificarCategoria() {
+        if (existenCategorias()) {
+            elegirCategoria(e -> {
+                JButton button = (JButton) e.getSource();
+                categoriaSeleccionada = (Categoria) button.getClientProperty("categoria");
+                editarDatosCategoria();
+            });
+        }
+    }
     
-        System.out.print("Nuevo nombre (deje en blanco para no modificar): ");
-        String nuevoNombre = entrada.nextLine();
-        System.out.print("Nuevo icono (deje en blanco para no modificar): ");
-        String nuevoIcono = entrada.nextLine();
-        System.out.print("Nuevo color (deje en blanco para no modificar): ");
-        String nuevoColor = entrada.nextLine();
+    public void editarDatosCategoria() {
+        panel.removeAll();
+        panel.setLayout(new BorderLayout());
+        TopBar.crearTopBar("Modificar categoría " + categoriaSeleccionada.getNombre(), e -> menuAVolver.actionPerformed(null), panel);
     
-        if (!nuevoNombre.isEmpty()) {
-            if (existeCategoria(nuevoNombre)) {
-                System.out.println("¡Ya existe una categoría con ese nombre!");
+        JPanel pnlCategoria = new JPanel(new GridLayout(3, 2));
+    
+        JLabel lblNombreCategoria = new JLabel("Nombre de la categoría:");
+        JLabel lblIcono = new JLabel("Icono:");
+        JLabel lblColor = new JLabel("Color:");
+    
+        JTextField txtNombreCategoria = new JTextField(categoriaSeleccionada.getNombre());
+        JTextField txtIcono = new JTextField(categoriaSeleccionada.getIcono());
+        JTextField txtColor = new JTextField(categoriaSeleccionada.getColor());
+    
+        pnlCategoria.add(lblNombreCategoria);
+        pnlCategoria.add(txtNombreCategoria);
+        pnlCategoria.add(lblIcono);
+        pnlCategoria.add(txtIcono);
+        pnlCategoria.add(lblColor);
+        pnlCategoria.add(txtColor);
+    
+        JButton btnModificar = new JButton("Modificar");
+        btnModificar.addActionListener(e -> {
+            // Obtener los nuevos valores y actualizar la categoría
+            String nuevoNombre = txtNombreCategoria.getText();
+            String nuevoIcono = txtIcono.getText();
+            String nuevoColor = txtColor.getText();
+    
+            // Verificar si ya existe una categoría con ese nombre
+            if (!nuevoNombre.equals(categoriaSeleccionada.getNombre()) && existeCategoria(nuevoNombre)) {
+                JOptionPane.showMessageDialog(null, "¡Ya existe una categoría con ese nombre!", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            categoriaExistente.setNombre(nuevoNombre);
-        }
     
-        if (!nuevoIcono.isEmpty()) {
-            categoriaExistente.setIcono(nuevoIcono);
-        }
+            // Actualizar los datos de la categoría seleccionada
+            categoriaSeleccionada.setNombre(nuevoNombre);
+            categoriaSeleccionada.setIcono(nuevoIcono);
+            categoriaSeleccionada.setColor(nuevoColor);
     
-        if (!nuevoColor.isEmpty()) {
-            categoriaExistente.setColor(nuevoColor);
-        }
+            JOptionPane.showMessageDialog(null, "Categoría modificada con éxito.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
     
-        System.out.println("Categoría modificada con éxito.");
+            // Volver al menú principal
+            menuAVolver.actionPerformed(null);
+        });
+    
+        JButton btnCancelar = new JButton("Cancelar");
+        btnCancelar.addActionListener(e -> menuAVolver.actionPerformed(null));
+    
+        JPanel pnlBotones = new JPanel(new GridLayout(1, 2));
+        pnlBotones.add(btnModificar);
+        pnlBotones.add(btnCancelar);
+    
+        panel.add(pnlCategoria, BorderLayout.CENTER);
+        panel.add(pnlBotones, BorderLayout.SOUTH);
+        panel.revalidate();
+        panel.repaint();
     }    
 
-    public Categoria obtenerCategoriaPorNombre(String nombre) {
-        for (Categoria categoria : categorias) {
-            if (categoria.getNombre().equalsIgnoreCase(nombre)) {
-                return categoria;
+    public void elegirCategoria(ActionListener accion) {
+        if (existenCategorias()) {
+            panel.removeAll();
+            panel.setLayout(new BorderLayout());
+            TopBar.crearTopBar("Categorías", menuAVolver, panel);
+    
+            JPanel pnlCategorias = new JPanel(new GridLayout(0, 1));
+    
+            for (Categoria categoria : categorias) {
+                JButton button = new JButton(categoria.toString());
+                button.putClientProperty("categoria", categoria); // Asociar la categoría con el botón
+                button.addActionListener(accion); // Asociar el listener al botón
+                pnlCategorias.add(button);
             }
+            panel.add(new JScrollPane(pnlCategorias), BorderLayout.CENTER);
+            panel.revalidate();
+            panel.repaint();
         }
-        return null;
-    }    
+    }
 
     public void eliminarCategoria() {
-        entrada.nextLine();  // Limpiar el buffer de entrada
+        if (existenCategorias()) {
+            elegirCategoria(e -> {
+                JButton button = (JButton) e.getSource();
+                Categoria categoriaSeleccionada = (Categoria) button.getClientProperty("categoria");
     
-        System.out.print("Ingrese el nombre de la categoría a eliminar: ");
-        String nombreCategoria = entrada.nextLine();
+                int opcion = JOptionPane.showConfirmDialog(null, "¿Estás seguro de eliminar la categoría?", "Confirmar eliminación", JOptionPane.YES_NO_OPTION);
     
-        Categoria categoriaExistente = obtenerCategoriaPorNombre(nombreCategoria);
-        if (categoriaExistente == null) {
-            System.out.println("¡La categoría no existe!");
-            return;
+                if (opcion == JOptionPane.YES_OPTION) {
+                    categorias.remove(categoriaSeleccionada);
+                    JOptionPane.showMessageDialog(null, "Categoría eliminada con éxito.", "Categoría eliminada", JOptionPane.INFORMATION_MESSAGE);
+                    menuAVolver.actionPerformed(null); // Regresar al menú principal
+                }
+            });
         }
-    
-        categorias.remove(categoriaExistente);
-        System.out.println("Categoría eliminada con éxito.");
-    }
+    }    
 
-    public void listarCategorias(){
-        for (int i = 0; i < categorias.size(); i++) {
-            System.out.println((i + 1) + ". " + categorias.get(i).getNombre());
+    public void mostrarCategorias() {
+        if (existenCategorias()) {
+            panel.removeAll();
+            panel.setLayout(new BorderLayout());
+            TopBar.crearTopBar("Categorías", menuAVolver, panel);
+            
+            JPanel pnlCategorias = new JPanel(new GridLayout(0, 1));
+            JLabel textoCategoria;
+            
+            for (Categoria categoria : categorias) {
+                textoCategoria = new JLabel(categoria.toString());
+                textoCategoria.setHorizontalAlignment(SwingConstants.CENTER);
+                pnlCategorias.add(textoCategoria);
+            }
+            
+            panel.add(pnlCategorias);
+            panel.revalidate();
+            panel.repaint();
         }
-    }
-        
-    public Categoria seleccionarCategoria() {
-        if (categorias.isEmpty()) {
-            System.out.println("No hay categorías disponibles. Se asignará 'Sin Categoría'.");
-            return new Categoria("Sin Categoría", "", "");
-        }
-    
-        System.out.println("Categorías disponibles:");
-        this.listarCategorias();
-    
-        System.out.print("Seleccione una categoría (0 para Sin Categoría): ");
-        int opcionCategoria = entrada.nextInt();
-        entrada.nextLine();  // Limpiar el buffer de entrada
-    
-        if (opcionCategoria == 0 || opcionCategoria > categorias.size()) {
-            System.out.println("Se asignará 'Sin Categoría'.");
-            return new Categoria("Sin Categoría", "", "");
-        }
-    
-        return categorias.get(opcionCategoria - 1);
-    }
-
+    }    
 }

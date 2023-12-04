@@ -36,9 +36,8 @@ public class Menu {
         ManejoArchivos.cargarDatos(registros, cuentas, categorias);
         
         gestorCuentas = new GestorCuentas(cuentas, e -> mostrarMenuCuentas(), panel);
-        gestorCategorias = new GestorCategorias(categorias);
-        gestorRegistros = new GestorRegistros(cuentas, registros, gestorCategorias, gestorCuentas);
-
+        gestorCategorias = new GestorCategorias(categorias, e -> mostrarMenuCategorias(), panel);
+        gestorRegistros = new GestorRegistros(gestorCategorias, gestorCuentas, registros, panel, e -> mostrarMenuRegistros());
     }
 
     public JButton generarBoton(String texto, ActionListener listener, JPanel panel) {
@@ -87,7 +86,7 @@ public class Menu {
         generarBoton("Crear Categoría", e -> gestorCategorias.crearCategoria(), pnlBotones);
         generarBoton("Modificar Categoría", e -> gestorCategorias.modificarCategoria(), pnlBotones);
         generarBoton("Eliminar Categoría", e -> gestorCategorias.eliminarCategoria(), pnlBotones);
-        generarBoton("Ver Categorías", e -> gestorCategorias.listarCategorias(), pnlBotones);
+        generarBoton("Ver Categorías", e -> gestorCategorias.mostrarCategorias(), pnlBotones);
     
         panel.add(pnlBotones, BorderLayout.CENTER);
         panel.revalidate();

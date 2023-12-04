@@ -1,11 +1,14 @@
 package test.facade;
 
+import java.awt.event.ActionListener;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Scanner;
+
+import javax.swing.*;
+import java.awt.*;
 
 import categoria.Categoria;
 import cuentas.Cuenta;
@@ -13,87 +16,172 @@ import registros.Egreso;
 import registros.Ingreso;
 import registros.Registro;
 import registros.Transaccion;
+import test.facade.componentes.TopBar;
 
 public class GestorRegistros {
+    private GestorCuentas gestorCuentas;
+    private GestorCategorias gestorCategorias;
     private List<Cuenta> cuentas;
     private List<Registro> registros;
-    private GestorCategorias gestorCategorias;
-    private GestorCuentas gestorCuentas;
-    private Scanner entrada;
+    private List<Categoria> categorias;
+    private JPanel panel;
+    private ActionListener menuAVolver;
     
-    public GestorRegistros(List<Cuenta> cuentas, List<Registro> registros, GestorCategorias gestorCategorias, GestorCuentas gestorCuentas, Scanner entrada){
-        this.cuentas = cuentas;
-        this.registros = registros;
+    public GestorRegistros(GestorCategorias gestorCategorias, GestorCuentas gestorCuentas, List<Registro> registros, JPanel panel, ActionListener menuAVolver){
         this.gestorCuentas = gestorCuentas;
         this.gestorCategorias = gestorCategorias;
-        this.entrada = entrada;
-    }
-    
-    public GestorRegistros(List<Cuenta> cuentas, List<Registro> registros, GestorCategorias gestorCategorias, GestorCuentas gestorCuentas){
-        this.cuentas = cuentas;
+        this.panel = panel;
+        this.menuAVolver = menuAVolver;
         this.registros = registros;
-        this.gestorCuentas = gestorCuentas;
-        this.gestorCategorias = gestorCategorias;
-        this.entrada = new Scanner(System.in);
+        this.cuentas = this.gestorCuentas.getCuentas();
+        this.categorias = this.gestorCategorias.getCategorias();
     }
 
-    public void mostrarTodosLosRegistros() {
+    private boolean existenRegistros() {
         if (registros.isEmpty()) {
-            System.out.println("No hay registros aún.");
+            JOptionPane.showMessageDialog(null, "No hay registros aún.", "Registros vacíos", JOptionPane.INFORMATION_MESSAGE);
+            return false;
         } else {
-            System.out.println("----- Todos los Registros -----");
-            for (Registro registro : registros) {
-                System.out.println(registro);
-            }
+            return true;
         }
     }
     
+    public void mostrarTodosLosRegistros() {
+        if (existenRegistros()) {
+            panel.removeAll();
+            panel.setLayout(new BorderLayout());
+            
+            // Cambia "Registros" por el nombre que desees mostrar en la barra superior
+            TopBar.crearTopBar("Registros", menuAVolver, panel);
+            
+            JPanel pnlRegistros = new JPanel(new GridLayout(0, 1));
+            JLabel textoRegistro;
+            
+            for (Registro registro : registros) {
+                textoRegistro = new JLabel(registro.toString());
+                textoRegistro.setHorizontalAlignment(SwingConstants.CENTER);
+                pnlRegistros.add(textoRegistro);
+            }
+            
+            panel.add(pnlRegistros);
+            panel.revalidate();
+            panel.repaint();
+        }
+    }
+
+    private boolean existenRegistrosPorTipo(String tipo) {
+        boolean existen = false;
+        for (Registro registro : registros) {
+            if (registro.getClass().getSimpleName().equals(tipo)) {
+                existen = true;
+                break;
+            }
+        }
+        if (!existen) {
+            JOptionPane.showMessageDialog(null, "No hay registros de tipo " + tipo + ".", "Registros vacíos", JOptionPane.INFORMATION_MESSAGE);
+        }
+        return existen;
+    }
+  
     public void mostrarRegistrosPorTipo(String tipo) {
-        if (registros.isEmpty()) {
-            System.out.println("No hay registros aún.");
-        } else {
-            System.out.println("----- " + tipo + " -----");
+        if (existenRegistrosPorTipo(tipo)) {
+            panel.removeAll();
+            panel.setLayout(new BorderLayout());
+            
+            // Cambia el mensaje en la barra superior según el tipo
+            TopBar.crearTopBar("Registros de tipo " + tipo, menuAVolver, panel);
+            
+            JPanel pnlRegistros = new JPanel(new GridLayout(0, 1));
+            JLabel textoRegistro;
+            
             for (Registro registro : registros) {
                 if (registro.getClass().getSimpleName().equals(tipo)) {
-                    System.out.println(registro);
+                    textoRegistro = new JLabel(registro.toString());
+                    textoRegistro.setHorizontalAlignment(SwingConstants.CENTER);
+                    pnlRegistros.add(textoRegistro);
                 }
             }
+            
+            panel.add(pnlRegistros);
+            panel.revalidate();
+            panel.repaint();
         }
     }    
 
-    public void mostrarRegistrosPorFecha() {
-        System.out.print("Ingrese la fecha (DD/MM/AAAA): ");
-        String fechaInput = entrada.nextLine();
+     public void mostrarRegistrosPorFecha() {
+        panel.removeAll();
+        panel.setLayout(new BorderLayout());
 
-        try {
-            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-            Date fechaBusqueda = formatter.parse(fechaInput);
+        JPanel panelContenido = new JPanel(new BorderLayout());
+        JPanel panelRegistros = new JPanel(new GridLayout(0, 1));
+        JScrollPane scrollPane = new JScrollPane(panelRegistros);
+        panelContenido.add(scrollPane, BorderLayout.CENTER);
 
-            if (registros.isEmpty()) {
-                System.out.println("No hay registros aún.");
-                return;
-            }
+        JPanel panelBusqueda = new JPanel(new GridLayout(1, 4));
+        JTextField txtDia = new JTextField();
+        JTextField txtMes = new JTextField();
+        JTextField txtAnio = new JTextField();
 
-            boolean registrosEncontrados = false;
+        JButton btnBuscar = new JButton("Buscar");
+        btnBuscar.addActionListener(e -> {
+            panelRegistros.removeAll();
+            String dia = txtDia.getText();
+            String mes = txtMes.getText();
+            String anio = txtAnio.getText();
 
-            System.out.println("----- Registros del " + fechaInput + " -----");
-            for (Registro registro : registros) {
-                Date fechaRegistro = quitarTiempo(registro.getFecha()); // Método auxiliar para quitar la parte de tiempo
-                fechaBusqueda = quitarTiempo(fechaBusqueda); // Asegurar que la fecha de búsqueda no tenga parte de tiempo
-                if (fechaRegistro != null && fechaRegistro.compareTo(fechaBusqueda) == 0) {
-                    System.out.println(registro);
-                    registrosEncontrados = true;
+            String fechaInput = dia + "/" + mes + "/" + anio;
+
+            try {
+                SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+                Date fechaBusqueda = formatter.parse(fechaInput);
+
+                if (registros.isEmpty()) {
+                    JLabel label = new JLabel("No hay registros aún.");
+                    panelRegistros.add(label);
+                    panelRegistros.revalidate();
+                    panelRegistros.repaint();
+                    return;
                 }
-            }
 
-            if (!registrosEncontrados) {
-                System.out.println("No se encontraron registros para la fecha " + fechaInput);
+                boolean registrosEncontrados = false;
+
+                for (Registro registro : registros) {
+                    Date fechaRegistro = quitarTiempo(registro.getFecha());
+                    fechaBusqueda = quitarTiempo(fechaBusqueda);
+                    if (fechaRegistro != null && fechaRegistro.compareTo(fechaBusqueda) == 0) {
+                        JLabel labelRegistro = new JLabel(registro.toString());
+                        panelRegistros.add(labelRegistro);
+                        registrosEncontrados = true;
+                    }
+                }
+
+                if (!registrosEncontrados) {
+                    JLabel labelNoEncontrado = new JLabel("No se encontraron registros para la fecha " + fechaInput);
+                    panelRegistros.add(labelNoEncontrado);
+                }
+                panelRegistros.revalidate();
+                panelRegistros.repaint();
+            } catch (ParseException ex) {
+                JLabel labelError = new JLabel("Formato de fecha incorrecto. Por favor, usa el formato DD/MM/AAAA.");
+                panelRegistros.add(labelError);
+                panelRegistros.revalidate();
+                panelRegistros.repaint();
             }
-        } catch (ParseException e) {
-            System.out.println("Formato de fecha incorrecto. Por favor, usa el formato DD/MM/AAAA.");
-        }
+        });
+
+        panelBusqueda.add(txtDia);
+        panelBusqueda.add(txtMes);
+        panelBusqueda.add(txtAnio);
+        panelBusqueda.add(btnBuscar);
+
+        panelContenido.add(panelBusqueda, BorderLayout.PAGE_START);
+        TopBar.crearTopBar("Buscar Registros por Fecha", menuAVolver, panel);
+        panel.add(panelContenido, BorderLayout.CENTER);
+
+        panel.revalidate();
+        panel.repaint();
     }
-
+    
     public Date quitarTiempo(Date fecha) {
         if (fecha == null) {
             return null;
@@ -106,91 +194,168 @@ public class GestorRegistros {
         cal.set(Calendar.MILLISECOND, 0);
         return cal.getTime();
     }
-
+    
     public void agregarRegistro() {
-        Categoria categoria;
-        System.out.println("----- Agregar Registro -----");
-        if (cuentas.isEmpty()) {
-            System.out.println("Error: No existen cuentas. Por favor, primero agrega una cuenta.");
-        } else {
-            System.out.print("Seleccione el tipo de registro (1. Ingreso / 2. Egreso / 3. Transferencia): ");
-            int tipoTransaccion = entrada.nextInt();
-            entrada.nextLine();  // Limpiar el buffer de entrada
 
-            System.out.print("Descripción: ");
-            String descripcion = entrada.nextLine();
-
-            System.out.print("Monto: ");
-            double monto = entrada.nextDouble();
-            entrada.nextLine();  // Limpiar el buffer de entrada
-
-            Date fecha = new Date();  // Fecha actual por defecto
-
-            switch (tipoTransaccion) {
-                case 1:
-                    categoria = gestorCategorias.seleccionarCategoria();
-                    gestorCuentas.mostrarCuentas();
-                    System.out.print("Seleccione la cuenta a asociar: ");
-                    int indexCuentaIngreso = entrada.nextInt();
-                    entrada.nextLine();  // Limpiar el buffer de entrada
-                    if (indexCuentaIngreso >= 0 && indexCuentaIngreso < cuentas.size()) {
-                        Cuenta cuentaIngreso = cuentas.get(indexCuentaIngreso);
-                        Ingreso ingreso = new Ingreso(fecha, descripcion, monto, categoria, cuentaIngreso);
-                        registros.add(ingreso);
-                        cuentaIngreso.actualizarBalance(monto);
-                    } else {
-                        System.out.println("Error: Índice de cuenta no válido.");
-                    }
-                    break;
-                case 2:
-                    categoria = gestorCategorias.seleccionarCategoria();
-                    gestorCuentas.mostrarCuentas();
-                    System.out.print("Seleccione la cuenta a asociar: ");
-                    int indexCuentaEgreso = entrada.nextInt();
-                    entrada.nextLine();  // Limpiar el buffer de entrada
-                    if (indexCuentaEgreso >= 0 && indexCuentaEgreso < cuentas.size()) {
-                        Cuenta cuentaEgreso = cuentas.get(indexCuentaEgreso);
-                        Egreso egreso = new Egreso(fecha, descripcion, monto, categoria, cuentaEgreso);
-                        registros.add(egreso);
-                        cuentaEgreso.actualizarBalance(-monto);
-                    } else {
-                        System.out.println("Error: Índice de cuenta no válido.");
-                    }
-                    break;
-                    case 3:
-                    gestorCuentas.mostrarCuentas();
-                    System.out.print("Cuenta de origen (índice): ");
-                    int indexCuentaOrigen = entrada.nextInt();
-                    entrada.nextLine();  // Limpiar el buffer de entrada
-                    if (indexCuentaOrigen >= 0 && indexCuentaOrigen < cuentas.size()) {
-                        Cuenta cuentaOrigen = cuentas.get(indexCuentaOrigen);
-                
-                        gestorCuentas.mostrarCuentas();
-                        System.out.print("Cuenta de destino (índice): ");
-                        int indexCuentaDestino = entrada.nextInt();
-                        entrada.nextLine();  // Limpiar el buffer de entrada
-                        if (indexCuentaDestino >= 0 && indexCuentaDestino < cuentas.size()) {
-                            Cuenta cuentaDestino = cuentas.get(indexCuentaDestino);
-                
-                            Transaccion transferencia = new Transaccion(fecha, descripcion, monto, cuentaOrigen, cuentaDestino);
-                            registros.add(transferencia);
-                
-                            cuentaOrigen.actualizarBalance(-monto);
-                            cuentaDestino.actualizarBalance(monto);
-                        } else {
-                            System.out.println("Error: Índice de cuenta de destino no válido.");
-                        }
-                    } else {
-                        System.out.println("Error: Índice de cuenta de origen no válido.");
-                    }
-                    break;                
-                default:
-                    System.out.println("Tipo de registro no válido.");
-                    break;
-            }
-
-            System.out.println("Registro agregado con éxito.");
+        if(cuentas.isEmpty()){
+            JOptionPane.showMessageDialog(null, "No existen cuentas. Por favor, primero agrega una cuenta.", "Cuentas no existentes", JOptionPane.WARNING_MESSAGE);
+            return;
         }
-    }
 
+        panel.removeAll();
+        panel.setLayout(new BorderLayout());
+    
+        // TopBar: Elegir tipo de registro
+        TopBar.crearTopBar("Elige el tipo de registro", e -> menuAVolver.actionPerformed(null), panel);
+    
+        JPanel panelTipoRegistro = new JPanel(new GridLayout(3, 1));
+    
+        JButton btnIngreso = new JButton("Agregar Ingreso");
+        JButton btnEgreso = new JButton("Agregar Egreso");
+        JButton btnTransferencia = new JButton("Agregar Transferencia");
+    
+        // Acción al elegir Ingreso
+        btnIngreso.addActionListener(e -> {
+            mostrarFormularioRegistro("Ingreso");
+        });
+    
+        // Acción al elegir Egreso
+        btnEgreso.addActionListener(e -> {
+            mostrarFormularioRegistro("Egreso");
+        });
+    
+        // Acción al elegir Transferencia
+        btnTransferencia.addActionListener(e -> {
+            if(cuentas.size() < 2){
+                JOptionPane.showMessageDialog(null, "No existen suficientes cuentas para hacer una transferencia.", "Cuentas insuficientes", JOptionPane.WARNING_MESSAGE);
+            }else
+                mostrarFormularioRegistro("Transferencia");
+        });
+    
+        // Agregar botones al panel de selección de tipo de registro
+        panelTipoRegistro.add(btnIngreso);
+        panelTipoRegistro.add(btnEgreso);
+        panelTipoRegistro.add(btnTransferencia);
+    
+        panel.add(panelTipoRegistro, BorderLayout.CENTER);
+        panel.revalidate();
+        panel.repaint();
+    }
+    
+    public void mostrarFormularioRegistro(String tipoRegistro) {
+        panel.removeAll();
+        panel.setLayout(new BorderLayout());
+
+        TopBar.crearTopBar("Agregar " + tipoRegistro, e -> agregarRegistro(), panel);
+
+        JPanel panelFormulario = new JPanel(new GridLayout(5, 2));
+
+        JTextField txtDescripcion = new JTextField();
+        JTextField txtMonto = new JTextField();
+
+        panelFormulario.add(new JLabel("Descripción:"));
+        panelFormulario.add(txtDescripcion);
+        panelFormulario.add(new JLabel("Monto:"));
+        panelFormulario.add(txtMonto);
+
+        JComboBox<String> listaCategorias = new JComboBox<>();
+
+        if (categorias.isEmpty()) {
+            listaCategorias.addItem("Sin categoría");
+            listaCategorias.setEnabled(false);
+        } else {
+            for (Categoria categoria : categorias) {
+                listaCategorias.addItem(categoria.getNombre());
+            }
+        }
+
+        JComboBox<String> listaCuentas = new JComboBox<>();
+
+        if (cuentas.isEmpty()) {
+            listaCuentas.addItem("No hay cuentas disponibles");
+            listaCuentas.setEnabled(false);
+        } else {
+            for (Cuenta cuenta : cuentas) {
+                listaCuentas.addItem(cuenta.getNombre());
+            }
+        }
+
+        JComboBox<String> listaCuentaOrigen = new JComboBox<>();
+        JComboBox<String> listaCuentaDestino = new JComboBox<>();
+
+        if (cuentas.isEmpty()) {
+            listaCuentaOrigen.addItem("No hay cuentas disponibles");
+            listaCuentaDestino.addItem("No hay cuentas disponibles");
+            listaCuentaOrigen.setEnabled(false);
+            listaCuentaDestino.setEnabled(false);
+        } else {
+            for (Cuenta cuenta : cuentas) {
+                listaCuentaOrigen.addItem(cuenta.getNombre());
+                listaCuentaDestino.addItem(cuenta.getNombre());
+            }
+        }
+
+        if (tipoRegistro.equals("Ingreso") || tipoRegistro.equals("Egreso")) {
+            panelFormulario.add(new JLabel("Categoría:"));
+            panelFormulario.add(listaCategorias);
+            panelFormulario.add(new JLabel("Cuenta:"));
+            panelFormulario.add(listaCuentas);
+        } else if (tipoRegistro.equals("Transferencia")) {
+            panelFormulario.add(new JLabel("Cuenta Origen:"));
+            panelFormulario.add(listaCuentaOrigen);
+            panelFormulario.add(new JLabel("Cuenta Destino:"));
+            panelFormulario.add(listaCuentaDestino);
+        }
+
+        JButton btnAgregarRegistro = new JButton("Agregar");
+        JButton btnCancelar = new JButton("Cancelar");
+
+        btnAgregarRegistro.addActionListener(e -> {
+            String descripcion = txtDescripcion.getText();
+            double monto = Double.parseDouble(txtMonto.getText());
+    
+            Categoria categoriaSeleccionada = categorias.isEmpty() ? gestorCategorias.sinCategoria() : categorias.get(listaCategorias.getSelectedIndex());
+            Cuenta cuentaSeleccionada = cuentas.isEmpty() ? null : cuentas.get(listaCuentas.getSelectedIndex());
+    
+            if (tipoRegistro.equals("Ingreso")) {
+                Ingreso ingreso = new Ingreso(new Date(), descripcion, monto, categoriaSeleccionada, cuentaSeleccionada);
+                registros.add(ingreso);
+                cuentaSeleccionada.actualizarBalance(monto);
+                menuAVolver.actionPerformed(null);
+            } else if (tipoRegistro.equals("Egreso")) {
+                Egreso egreso = new Egreso(new Date(), descripcion, monto, categoriaSeleccionada, cuentaSeleccionada);
+                registros.add(egreso);
+                cuentaSeleccionada.actualizarBalance(-monto);
+                menuAVolver.actionPerformed(null);
+            }  else if (tipoRegistro.equals("Transferencia")) {
+                Cuenta cuentaOrigen = cuentas.isEmpty() ? null : cuentas.get(listaCuentaOrigen.getSelectedIndex());
+                Cuenta cuentaDestino = cuentas.isEmpty() ? null : cuentas.get(listaCuentaDestino.getSelectedIndex());
+                if (cuentaOrigen != cuentaDestino) {
+                    double saldoOrigen = cuentaOrigen.getSaldo();
+                    double montoTransferencia = Double.parseDouble(txtMonto.getText());
+                    if (saldoOrigen >= montoTransferencia) {
+                        Transaccion transaccion = new Transaccion(new Date(), descripcion, montoTransferencia, cuentaOrigen, cuentaDestino);
+                        registros.add(transaccion);
+        
+                        cuentaOrigen.actualizarBalance(-montoTransferencia);
+                        cuentaDestino.actualizarBalance(montoTransferencia);
+                        menuAVolver.actionPerformed(null);
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Error: La cuenta de origen no tiene fondos suficientes para realizar la transferencia.");
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "Error: Seleccione distintas cuentas para hacer válida la transferencia.");
+                }
+            }
+        });
+    
+        btnCancelar.addActionListener(e -> menuAVolver.actionPerformed(null));
+    
+        panelFormulario.add(btnAgregarRegistro);
+        panelFormulario.add(btnCancelar);
+    
+        panel.add(panelFormulario, BorderLayout.CENTER);
+        panel.revalidate();
+        panel.repaint();
+    }    
 }
