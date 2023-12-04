@@ -17,7 +17,6 @@ import facade.componentes.TopBar;
 import facade.estilos.Estilos;
 
 public class GestorRegistros {
-    private static final Cuenta cuentaSeleccionada = null;
     private GestorCuentas gestorCuentas;
     private GestorCategorias gestorCategorias;
     private List<Cuenta> cuentas;
@@ -38,7 +37,7 @@ public class GestorRegistros {
         this.configuracion = configuracion;
     }
 
-    private boolean existenRegistros() {
+    public boolean existenRegistros() {
         if (registros.isEmpty()) {
             JOptionPane.showMessageDialog(null, "No hay registros aún.", "Registros vacíos", JOptionPane.INFORMATION_MESSAGE);
             return false;
