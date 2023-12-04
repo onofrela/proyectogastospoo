@@ -49,42 +49,29 @@ public class GestorCategorias {
         return this.categorias;
     }
     
-    public Color elegirColor() {
-        Color[] coloresPermitidos = colores; // Lista de colores permitidos
+    public void elegirColor() {
     
-        JPanel pnlColores = new JPanel(new GridLayout(1, coloresPermitidos.length));
-        JButton[] btnColores = new JButton[coloresPermitidos.length];
-    
+        JPanel pnlColores = new JPanel(new GridLayout(3, 10));
         // Crear botones para cada color permitido
-        for (int i = 0; i < coloresPermitidos.length; i++) {
-            btnColores[i] = new JButton();
-            btnColores[i].setBackground(coloresPermitidos[i]);
-            btnColores[i].setPreferredSize(new Dimension(30, 30));
+        for (Color color: colores) {
+            JButton btnColor = new JButton();
+            btnColor.setBackground(color);
+            btnColor.setPreferredSize(new Dimension(30, 30));
+            btnColor.setCursor(new Cursor(Cursor.HAND_CURSOR));
     
             // Agregar acción al botón para seleccionar el color
-            btnColores[i].addActionListener(e -> {
+            btnColor.addActionListener(e -> {
                 JButton btnColorSeleccionado = (JButton) e.getSource();
                 this.colorSeleccionado = btnColorSeleccionado.getBackground();
             });
     
-            pnlColores.add(btnColores[i]);
+            pnlColores.add(btnColor);
         }
     
         int opcion = JOptionPane.showOptionDialog(null, pnlColores, "Seleccionar color", JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, null, null);
         if (opcion != JOptionPane.CLOSED_OPTION) {
-            return coloresPermitidos[opcion];
+            
         }
-        return null; // Si se cierra la ventana sin selección
-    }
-
-    public String[] obtenerNombresIconos() {
-        String directorioIconos = "/categoria/iconos";
-    
-        URL urlDirectorio = getClass().getResource(directorioIconos);
-        File folder = new File(urlDirectorio.getFile());
-        String[] nombresIconos = folder.list();
-    
-        return nombresIconos;
     }
 
     public void elegirIcono() {
@@ -97,6 +84,7 @@ public class GestorCategorias {
                 ImageIcon icono = new ImageIcon(getClass().getResource("/categoria/iconos/" + nombreIcono));
                 JButton btnIcono = new JButton(icono);
                 btnIcono.setPreferredSize(new Dimension(50, 50));
+                btnIcono.setCursor(new Cursor(Cursor.HAND_CURSOR));
     
                 // Acción al hacer clic en el botón de ícono
                 btnIcono.addActionListener(e -> {
@@ -115,6 +103,16 @@ public class GestorCategorias {
         }
     }    
     
+    public String[] obtenerNombresIconos() {
+        String directorioIconos = "/categoria/iconos";
+    
+        URL urlDirectorio = getClass().getResource(directorioIconos);
+        File folder = new File(urlDirectorio.getFile());
+        String[] nombresIconos = folder.list();
+    
+        return nombresIconos;
+    }
+
     public void panelDatosCategoria(String tituloTopBar, JButton accion) {
         panel.removeAll();
         panel.setLayout(new BorderLayout());
