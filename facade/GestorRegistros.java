@@ -11,10 +11,7 @@ import java.awt.*;
 
 import categoria.Categoria;
 import cuentas.Cuenta;
-import registros.Egreso;
-import registros.Ingreso;
-import registros.Registro;
-import registros.Transaccion;
+import registros.*;
 import facade.componentes.BotonCancelar;
 import facade.componentes.TopBar;
 import facade.estilos.Estilos;

@@ -14,10 +14,10 @@ import monto.Monto;;
 
 public class GestorCuentas {
     private List<Cuenta> cuentas;
-    private JPanel panel;
-    private ActionListener menuAVolver;
     private Cuenta cuentaSeleccionada;
     private Configuracion configuracion;
+    private JPanel panel;
+    private ActionListener menuAVolver;
 
     public GestorCuentas(List<Cuenta> cuentas, ActionListener menuAVolver, JPanel panel, Configuracion configuracion){
         this.panel = panel;
@@ -79,7 +79,7 @@ public class GestorCuentas {
             JPanel pnlCuentas = new JPanel(new GridLayout(0, 1));
 
             for (Cuenta cuenta : cuentas) {
-                
+
                 JButton button = new JButton(cuenta.toString());
                 Estilos.estilizarBoton(button);
                 button.putClientProperty("cuenta", cuenta); // Asociar la cuenta con el botón

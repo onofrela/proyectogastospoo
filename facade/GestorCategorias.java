@@ -16,14 +16,16 @@ import facade.estilos.Estilos;
 
 public class GestorCategorias {
     private List<Categoria> categorias;
-    private Color[] colores;
-    private ActionListener menuAVolver;
-    private JPanel panel;
-    private Categoria categoriaSeleccionada;
     public Categoria categoriaNula;
+
+    private JPanel panel;
+    private Color[] colores;
+    private JTextField txtNombreCategoria;
+    private ActionListener menuAVolver;
+
+    private Categoria categoriaSeleccionada;
     private ImageIcon iconoSeleccionado;
     private Color colorSeleccionado;
-    private JTextField txtNombreCategoria;
 
     public GestorCategorias(List<Categoria> categorias, ActionListener menuAVolver, JPanel panel) {
         this.txtNombreCategoria = new JTextField();
