@@ -53,6 +53,23 @@ public class GestorRegistros {
                 "Monto: $" + registro.getMonto() + "</span>";
     }
 
+    public JPanel formatearRegistro(Registro registro){
+        JPanel cartaRegistro = new JPanel(new FlowLayout());
+        JLabel textoRegistro = new JLabel("<html><div style='text-align: center;'>" + 
+                formatRegistroText(registro) + "</div></html>");
+        if(registro instanceof Ingreso) {
+            Ingreso ingreso = (Ingreso) registro;
+            Categoria categoria = ingreso.getCategoria();
+            cartaRegistro.add(gestorCategorias.generarIcono(categoria));
+        }else if(registro instanceof Egreso) {
+            Egreso egreso = (Egreso) registro;
+            Categoria categoria = egreso.getCategoria();
+            cartaRegistro.add(gestorCategorias.generarIcono(categoria));
+        }
+        cartaRegistro.add(textoRegistro);
+        return cartaRegistro;
+    }
+
     public void mostrarTodosLosRegistros() {
         if (existenRegistros()) {
             panel.removeAll();
@@ -62,12 +79,9 @@ public class GestorRegistros {
             TopBar.crearTopBar("Registros", menuAVolver, panel);
             
             JPanel pnlRegistros = new JPanel(new GridLayout(0, 1));
-            JLabel textoRegistro;
             
             for (Registro registro : registros) {
-                textoRegistro = new JLabel("<html><div style='text-align: center;'>" + 
-                formatRegistroText(registro) + "</div></html>");
-                pnlRegistros.add(textoRegistro);
+                pnlRegistros.add(formatearRegistro(registro));
             }
             
             panel.add(pnlRegistros);

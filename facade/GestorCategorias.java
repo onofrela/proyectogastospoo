@@ -133,15 +133,11 @@ public class GestorCategorias {
         btnSeleccionarColor.addActionListener(e -> {
             Color colorSeleccionado = elegirColor(); // Método para mostrar colores y seleccionar uno
             if (colorSeleccionado != null) {
-                // Hacer algo con el color seleccionado, como asignarlo a un componente o almacenarlo
-                // txtColor.setText(colorSeleccionado.toString());
             }
         });
     
-        // Acción al hacer clic en el botón para seleccionar ícono
         btnSeleccionarIcono.addActionListener(e -> {
-            elegirIcono(); // Método para mostrar los íconos y permitir la selección
-            // Dentro del método mostrarIconos, puedes definir cómo manejar la selección del ícono
+            elegirIcono();
         });
     
         JButton btnAgregar = new JButton("Agregar");
@@ -320,18 +316,41 @@ public class GestorCategorias {
         }
     }    
 
+    public JPanel generarIcono(Categoria categoria) {
+        ImageIcon icono = categoria.getIcono();
+        Color color = categoria.getColor();
+
+        // Crear el panel que contendrá el ícono circular
+        JPanel panelIconoColor = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                int diameter = Math.min(getWidth(), getHeight());
+                g.setColor(color);
+                g.fillOval(0, 0, diameter, diameter);
+
+                int iconSize = 25; // Tamaño del ícono dentro del círculo
+                int x = (diameter - iconSize) / 2;
+                int y = (diameter - iconSize) / 2;
+
+                g.drawImage(icono.getImage(), x, y, iconSize, iconSize, null);
+            }
+
+            @Override
+            public Dimension getPreferredSize() {
+                return new Dimension(50, 50);
+            }
+        };
+
+        return panelIconoColor;
+    }
+    
     private JPanel generarPanelCategoria(Categoria categoria) {
         JPanel panelCategoria = new JPanel(new BorderLayout());
         JLabel nombreCategoria = new JLabel(categoria.getNombre());
     
-        // Crear el ícono y el círculo del color correspondiente
-        ImageIcon icono = categoria.getIcono();
-        JPanel panelIconoColor = new JPanel(new BorderLayout());
-        panelIconoColor.setBackground(categoria.getColor());
-    
-        JLabel labelIcono = new JLabel(icono);
-        labelIcono.setHorizontalAlignment(SwingConstants.CENTER);
-        panelIconoColor.add(labelIcono, BorderLayout.CENTER);
+        // Crear el ícono
+        JPanel panelIconoColor = generarIcono(categoria);
     
         // Agregar el ícono con el color al panel de la categoría
         panelCategoria.add(panelIconoColor, BorderLayout.WEST);
