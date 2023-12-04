@@ -1,14 +1,16 @@
 package cuentas;
 import java.io.Serializable;
 
+import monto.Monto;
+
 public class Cuenta implements Serializable {
     private String nombre;
-    private double saldo;
+    private Monto saldo;
 
     // Constructor
     public Cuenta(String nombre, double saldo) {
         this.nombre = nombre;
-        this.saldo = saldo;
+        this.saldo = new Monto(saldo);
     }
 
     public String getNombre() {
@@ -20,19 +22,23 @@ public class Cuenta implements Serializable {
     }
 
     public double getSaldo() {
+        return this.saldo.getMonto();
+    }
+
+    public Monto getSaldoFormateado() {
         return this.saldo;
     }
 
     public void setSaldo(double saldo) {
-        this.saldo = saldo;
+        this.saldo.setMonto(saldo);
     }
 
     public void actualizarBalance(double monto) {
-        this.saldo += monto;
+        this.saldo.setMonto(this.getSaldo() + monto);
     }
+
     @Override
     public String toString() {
-        String saldoFormateado = String.format("%.2f", saldo);
-        return "Cuenta: " + getNombre() + "\nSaldo: $" + saldoFormateado + "\n";
+        return "Cuenta: " + getNombre() + "\nSaldo: $" + this.saldo + "\n";
     }    
 }

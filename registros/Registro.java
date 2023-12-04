@@ -2,6 +2,9 @@ package registros;
 import java.io.Serializable;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
+
+import monto.Monto;
+
 import java.time.LocalDateTime;
 
 public abstract class Registro implements Serializable {
@@ -10,13 +13,12 @@ public abstract class Registro implements Serializable {
     private String idioma;
     private String pais;
     private String descripcion;
-    private double monto;
-
+    private Monto monto;
 
     public Registro(LocalDateTime fecha, String descripcion, double monto) {
         this.fecha = fecha;
         this.descripcion = descripcion;
-        this.monto = monto;
+        this.monto = new Monto(monto);
         this.patron = "dd 'de' MMMM 'del' yyyy";
         this.idioma = "es";
         this.pais = "ES";
@@ -45,11 +47,15 @@ public abstract class Registro implements Serializable {
     }
 
     public double getMonto() {
+        return monto.getMonto();
+    }
+
+    public Monto getMontoFormateado() {
         return monto;
     }
 
     public void setMonto(double monto) {
-        this.monto = monto;
+        this.monto.setMonto(monto);
     }
 
     @Override

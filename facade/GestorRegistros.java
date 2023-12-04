@@ -49,7 +49,7 @@ public class GestorRegistros {
         return "<span style='font-family: Arial; font-size: 14pt; color: black;'>" + 
                 "Fecha: <span style='font-weight: 400;'>" + registro.obtenerFecha() + "</span><br>" +
                 "Descripción: <span style='font-weight: 400;'>" + registro.getDescripcion()+ "</span><br>" +
-                "Monto: <span style='font-weight: 400;'>$" + registro.getMonto() + "</span></span>";
+                "Monto: <span style='font-weight: 400;'>" + registro.getMontoFormateado() + "</span></span>";
     }
     private String formatTitulo(String titulo) {
         return "<div style='text-align: center;font-family: Arial; font-size: 14pt; color: black;'>"+titulo+"</div>";

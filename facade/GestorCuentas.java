@@ -7,7 +7,8 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 
 import cuentas.Cuenta;
-import facade.componentes.TopBar;;
+import facade.componentes.TopBar;
+import monto.Monto;;
 
 public class GestorCuentas {
     private List<Cuenta> cuentas;
@@ -37,9 +38,8 @@ public class GestorCuentas {
     public JPanel generarCartaCuenta(Cuenta cuenta) {
         JPanel carta = new JPanel(new BorderLayout());
         JLabel textoCuenta = new JLabel();
-        double saldoCuenta = cuenta.getSaldo();
-        String saldoFormateado = String.format("%.2f", saldoCuenta);
-        String balanceCuenta = cuenta.getNombre() + ": $" + saldoFormateado + "\n";
+        Monto saldoCuenta = cuenta.getSaldoFormateado();
+        String balanceCuenta = cuenta.getNombre() + ": " + saldoCuenta + "\n";
         textoCuenta.setText(balanceCuenta);
         textoCuenta.setHorizontalAlignment(SwingConstants.CENTER);
         textoCuenta.setForeground(new Color (249, 248, 237));
