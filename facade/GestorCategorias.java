@@ -23,8 +23,10 @@ public class GestorCategorias {
     public Categoria categoriaNula;
     private ImageIcon iconoSeleccionado;
     private Color colorSeleccionado;
+    private JTextField txtNombreCategoria;
 
     public GestorCategorias(List<Categoria> categorias, ActionListener menuAVolver, JPanel panel) {
+        this.txtNombreCategoria = new JTextField();
         this.categorias = categorias;
         this.menuAVolver = menuAVolver;
         this.panel = panel;
@@ -111,15 +113,14 @@ public class GestorCategorias {
         }
     }    
     
-    public void crearCategoria() {
+    public void panelDatosCategoria(String tituloTopBar, JButton accion) {
         panel.removeAll();
         panel.setLayout(new BorderLayout());
-        TopBar.crearTopBar("Crear nueva categoría", e -> menuAVolver.actionPerformed(null), panel);
+        TopBar.crearTopBarCategoria(tituloTopBar, e -> menuAVolver.actionPerformed(null), panel, generarIcono(iconoSeleccionado, colorSeleccionado));
     
         JPanel pnlCategoria = new JPanel(new GridLayout(3, 2));
     
         JLabel lblNombreCategoria = new JLabel("Nombre de la categoría:");
-        JTextField txtNombreCategoria = new JTextField();
     
         JLabel lblIcono = new JLabel("Icono:");
         JButton btnSeleccionarIcono = new JButton("Seleccionar Icono");
@@ -130,54 +131,73 @@ public class GestorCategorias {
         Estilos.estilizarBoton(btnSeleccionarColor);
     
         pnlCategoria.add(lblNombreCategoria);
-        pnlCategoria.add(txtNombreCategoria);
+        pnlCategoria.add(this.txtNombreCategoria);
         pnlCategoria.add(lblIcono);
         pnlCategoria.add(btnSeleccionarIcono);
         pnlCategoria.add(lblColor);
         pnlCategoria.add(btnSeleccionarColor);
     
-        // Acción al hacer clic en el botón para seleccionar color
         btnSeleccionarColor.addActionListener(e -> {
-            Color colorSeleccionado = elegirColor(); // Método para mostrar colores y seleccionar uno
-            if (colorSeleccionado != null) {
-            }
+            elegirColor();
+            TopBar.actualizarIcono(generarIcono(iconoSeleccionado, colorSeleccionado));
         });
     
         btnSeleccionarIcono.addActionListener(e -> {
             elegirIcono();
+            TopBar.actualizarIcono(generarIcono(iconoSeleccionado, colorSeleccionado));
         });
-    
-        JButton btnAgregar = new JButton("Agregar");
-        Estilos.estilizarBoton(btnAgregar);
-        btnAgregar.addActionListener(e -> {
-            // Obtener los valores ingresados por el usuario
-            String nuevoNombre = txtNombreCategoria.getText();
-            // Obtener los valores de icono y color seleccionados, si los hay
-    
-            // Verificar si ya existe una categoría con ese nombre
-            if (existeCategoria(nuevoNombre)) {
-                JOptionPane.showMessageDialog(null, "¡La categoría ya existe!", "Error", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-    
-            // Crear una nueva categoría y agregarla a la lista
-            Categoria nuevaCategoria = new Categoria(nuevoNombre, iconoSeleccionado, colorSeleccionado);
-            categorias.add(nuevaCategoria);
-    
-            JOptionPane.showMessageDialog(null, "Categoría creada con éxito.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-    
-            // Volver al menú principal
-            menuAVolver.actionPerformed(null);
-        });
-    
+
         JPanel pnlBotones = new JPanel(new GridLayout(1, 2));
-        pnlBotones.add(btnAgregar);
+        pnlBotones.add(accion);
         pnlBotones.add(BotonCancelar.crearBoton(menuAVolver));
     
         panel.add(pnlCategoria, BorderLayout.CENTER);
         panel.add(pnlBotones, BorderLayout.SOUTH);
         panel.revalidate();
         panel.repaint();
+    }    
+
+    public void editarDatosCategoria() {
+        JButton btnModificar = new JButton("Modificar");
+        Estilos.estilizarBoton(btnModificar);
+        btnModificar.addActionListener(e -> {
+            String nuevoNombre = txtNombreCategoria.getText();
+            if (!nuevoNombre.equals(categoriaSeleccionada.getNombre()) && existeCategoria(nuevoNombre)) {
+                JOptionPane.showMessageDialog(null, "¡Ya existe una categoría con ese nombre!", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+    
+            categoriaSeleccionada.setNombre(nuevoNombre);
+            categoriaSeleccionada.setIcono(iconoSeleccionado);
+            categoriaSeleccionada.setColor(colorSeleccionado);
+    
+            JOptionPane.showMessageDialog(null, "Categoría modificada con éxito.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+    
+            menuAVolver.actionPerformed(null);
+        });
+        this.txtNombreCategoria.setText(categoriaSeleccionada.getNombre());
+        panelDatosCategoria("Modificar categoría " + categoriaSeleccionada.getNombre(), btnModificar);
+    }    
+
+    public void crearCategoria() {
+        JButton btnAgregar = new JButton("Agregar");
+        Estilos.estilizarBoton(btnAgregar);
+        btnAgregar.addActionListener(e -> {
+            String nuevoNombre = this.txtNombreCategoria.getText();
+
+            if (existeCategoria(nuevoNombre)) {
+                JOptionPane.showMessageDialog(null, "¡La categoría ya existe!", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+    
+            Categoria nuevaCategoria = new Categoria(nuevoNombre, iconoSeleccionado, colorSeleccionado);
+            categorias.add(nuevaCategoria);
+    
+            JOptionPane.showMessageDialog(null, "Categoría creada con éxito.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+    
+            menuAVolver.actionPerformed(null);
+        });
+        panelDatosCategoria("Crear nueva categoría", btnAgregar);
     }    
 
     private boolean existeCategoria(String nombre) {
@@ -211,82 +231,6 @@ public class GestorCategorias {
         }
     }
     
-    public void editarDatosCategoria() {
-        panel.removeAll();
-        panel.setLayout(new BorderLayout());
-        TopBar.crearTopBar("Modificar categoría " + categoriaSeleccionada.getNombre(), e -> menuAVolver.actionPerformed(null), panel);
-    
-        JPanel pnlCategoria = new JPanel(new GridLayout(3, 2));
-    
-        JLabel lblNombreCategoria = new JLabel("Nombre de la categoría:");
-        JLabel lblIcono = new JLabel("Icono:");
-        JLabel lblColor = new JLabel("Color:");
-    
-        JTextField txtNombreCategoria = new JTextField(categoriaSeleccionada.getNombre());
-        JButton btnSeleccionarIcono = new JButton("Seleccionar Icono");
-        JButton btnSeleccionarColor = new JButton("Seleccionar Color");
-        Estilos.estilizarBoton(btnSeleccionarIcono);
-        Estilos.estilizarBoton(btnSeleccionarColor);
-    
-        pnlCategoria.add(lblNombreCategoria);
-        pnlCategoria.add(txtNombreCategoria);
-        pnlCategoria.add(lblIcono);
-        pnlCategoria.add(btnSeleccionarIcono);
-        pnlCategoria.add(lblColor);
-        pnlCategoria.add(btnSeleccionarColor);
-    
-        // Acción al hacer clic en el botón para seleccionar color
-        btnSeleccionarColor.addActionListener(e -> {
-            Color colorSeleccionado = elegirColor(); // Método para mostrar colores y seleccionar uno
-            if (colorSeleccionado != null) {
-                // Hacer algo con el color seleccionado, como asignarlo al componente correspondiente
-                // txtColor.setText(colorSeleccionado.toString());
-            }
-        });
-    
-        // Acción al hacer clic en el botón para seleccionar ícono
-        btnSeleccionarIcono.addActionListener(e -> {
-            elegirIcono(); // Método para mostrar íconos y seleccionar uno
-            if (iconoSeleccionado != null) {
-                // Hacer algo con el ícono seleccionado, como asignarlo al componente correspondiente
-                // txtIcono.setText(iconoSeleccionado);
-            }
-        });
-    
-        JButton btnModificar = new JButton("Modificar");
-        Estilos.estilizarBoton(btnModificar);
-        btnModificar.addActionListener(e -> {
-            // Obtener los nuevos valores y actualizar la categoría
-            String nuevoNombre = txtNombreCategoria.getText();
-            // Obtener los valores de icono y color seleccionados, si los hay
-    
-            // Verificar si ya existe una categoría con ese nombre
-            if (!nuevoNombre.equals(categoriaSeleccionada.getNombre()) && existeCategoria(nuevoNombre)) {
-                JOptionPane.showMessageDialog(null, "¡Ya existe una categoría con ese nombre!", "Error", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-    
-            // Actualizar los datos de la categoría seleccionada
-            categoriaSeleccionada.setNombre(nuevoNombre);
-            categoriaSeleccionada.setIcono(iconoSeleccionado);
-            categoriaSeleccionada.setColor(colorSeleccionado);
-    
-            JOptionPane.showMessageDialog(null, "Categoría modificada con éxito.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-    
-            // Volver al menú principal
-            menuAVolver.actionPerformed(null);
-        });
-    
-        JPanel pnlBotones = new JPanel(new GridLayout(1, 2));
-        pnlBotones.add(btnModificar);
-        pnlBotones.add(BotonCancelar.crearBoton(menuAVolver));
-    
-        panel.add(pnlCategoria, BorderLayout.CENTER);
-        panel.add(pnlBotones, BorderLayout.SOUTH);
-        panel.revalidate();
-        panel.repaint();
-    }    
-
     public void elegirCategoria(ActionListener accion) {
         if (existenCategorias()) {
             panel.removeAll();
@@ -329,6 +273,32 @@ public class GestorCategorias {
         ImageIcon icono = categoria.getIcono();
         Color color = categoria.getColor();
 
+        // Crear el panel que contendrá el ícono circular
+        JPanel panelIconoColor = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                int diameter = Math.min(getWidth(), getHeight());
+                g.setColor(color);
+                g.fillOval(0, 0, diameter, diameter);
+
+                int iconSize = 25; // Tamaño del ícono dentro del círculo
+                int x = (diameter - iconSize) / 2;
+                int y = (diameter - iconSize) / 2;
+
+                g.drawImage(icono.getImage(), x, y, iconSize, iconSize, null);
+            }
+
+            @Override
+            public Dimension getPreferredSize() {
+                return new Dimension(50, 50);
+            }
+        };
+
+        return panelIconoColor;
+    }
+
+    public JPanel generarIcono(ImageIcon icono, Color color) {
         // Crear el panel que contendrá el ícono circular
         JPanel panelIconoColor = new JPanel() {
             @Override
