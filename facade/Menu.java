@@ -13,38 +13,39 @@ import datos.ManejoArchivos;
 import registros.Registro;
 import facade.componentes.TopBar;
 import facade.estilos.Estilos;
-import monto.FormatoMonto;
 
 public class Menu {
     public JLabel lblBalance;
     public JPanel panel;
     public JFrame ventana;
 
-    private static List<Registro> registros = new ArrayList<>();
-    private static List<Cuenta> cuentas = new ArrayList<>();
-    private static List<Categoria> categorias = new ArrayList<>();
+    private List<Registro> registros = new ArrayList<>();
+    private List<Cuenta> cuentas = new ArrayList<>();
+    private List<Categoria> categorias = new ArrayList<>();
+    private Configuracion configuracion;
 
     private static GestorCuentas gestorCuentas;
     private static GestorCategorias gestorCategorias;
     private static GestorRegistros gestorRegistros;
     private static GestorFechas gestorFechas;
     private static GestorMonedas gestorMonedas;
-    private static Configuracion configuracion;
 
 
     private Balance balance;
 
-    public Menu(JFrame ventana, JPanel panel){
+    public Menu(JFrame ventana, JPanel panel, List<Registro> registros, List<Cuenta> cuentas, List<Categoria> categorias, Configuracion configuracion){
         this.ventana = ventana;
         this.panel = panel;
-        configuracion = new Configuracion(new FormatoMonto("$", "MXN"),"dd 'de' MMMM 'del' yyyy" , "es", "ES");
-        ManejoArchivos.cargarDatos(registros, cuentas, categorias, configuracion);
-        this.balance = new Balance(cuentas, configuracion);
-        gestorCuentas = new GestorCuentas(cuentas, e -> mostrarMenuCuentas(), panel, configuracion);
-        gestorCategorias = new GestorCategorias(categorias, e -> mostrarMenuCategorias(), panel);
-        gestorRegistros = new GestorRegistros(gestorCategorias, gestorCuentas, registros, panel, e -> mostrarMenuRegistros(), configuracion);
-        gestorMonedas = new GestorMonedas(panel, e -> mostrarMenuConfiguracion(), configuracion);
-        gestorFechas = new GestorFechas(panel, e -> mostrarMenuConfiguracion(), configuracion);
+        this.registros = registros;
+        this.cuentas = cuentas;
+        this.categorias = categorias;
+        this.configuracion = configuracion;
+        this.balance = new Balance(this.cuentas, this.configuracion);
+        gestorCuentas = new GestorCuentas(this.cuentas, e -> mostrarMenuCuentas(), this.panel, this.configuracion);
+        gestorCategorias = new GestorCategorias(this.categorias, e -> mostrarMenuCategorias(), this.panel);
+        gestorRegistros = new GestorRegistros(gestorCategorias, gestorCuentas, this.registros, this.panel, e -> mostrarMenuRegistros(), this.configuracion);
+        gestorMonedas = new GestorMonedas(this.panel, e -> mostrarMenuConfiguracion(), this.configuracion);
+        gestorFechas = new GestorFechas(this.panel, e -> mostrarMenuConfiguracion(), this.configuracion);
     }
 
     public JButton generarBoton(String texto, ActionListener listener, JPanel panel) {
@@ -158,10 +159,9 @@ public class Menu {
         // Lógica para generar reportes
     }
 
-
     private void salirDelPrograma() {
-        ManejoArchivos.guardarDatos(registros, cuentas, categorias, configuracion);
-        JOptionPane.showMessageDialog(null, "Saliendo de la aplicación. ¡Hasta luego!");
+        ManejoArchivos.guardarDatos(this.registros, this.cuentas, this.categorias, this.configuracion);
+        JOptionPane.showMessageDialog(null, "Saliendo de la aplicación. ¡Hasta luego!", "Cerrando aplicación", JOptionPane.PLAIN_MESSAGE);
         ventana.dispose();
     }
 }

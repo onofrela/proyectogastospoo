@@ -1,30 +1,45 @@
 import javax.swing.*;
 
+import categoria.Categoria;
+import cuentas.Cuenta;
+import datos.ManejoArchivos;
 import facade.*;
+import monto.FormatoMonto;
+import registros.Registro;
 
+import java.awt.Image;
 import java.awt.event.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class App {
     private JFrame ventana;
     private JPanel panel;
     private Menu menu;
+    private List<Registro> registros = new ArrayList<>();
+    private List<Cuenta> cuentas = new ArrayList<>();
+    private List<Categoria> categorias = new ArrayList<>();
+    private Configuracion configuracion = new Configuracion(new FormatoMonto("$", "MXN"),"dd 'de' MMMM 'del' yyyy" , "es", "ES");
 
     public App() {
         initialize();
     }
     private void initialize() {
-        ventana = new JFrame("Menú Principal");
+        ManejoArchivos.cargarDatos(this.registros, this.cuentas, this.categorias, this.configuracion);
+        ventana = new JFrame("Registro de Gastos");
         ventana.setSize(800, 600); // Establece el tamaño predeterminado de la ventana principal
         ventana.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        Image icon = new ImageIcon(getClass().getResource("/icon.png")).getImage();
+        ventana.setIconImage(icon);
+        ventana.setLocationRelativeTo(null);
     
         panel = new JPanel();
         panel.setLayout(null);
         panel.setBorder(BorderFactory.createEmptyBorder(50, 50, 50, 50));
-        this.menu = new Menu(ventana, panel);
+        this.menu = new Menu(this.ventana, this.panel, this.registros, this.cuentas, this.categorias, this.configuracion);
         ventana.add(panel);
     
-        menu.mostrarMenuPrincipal(); // Mostrar el menú principal al iniciar
-    
+        menu.mostrarMenuPrincipal(); 
         ventana.setVisible(true);
 
         ventana.addWindowListener(new WindowAdapter() {
@@ -37,10 +52,9 @@ public class App {
     }
 
     private void salirDelPrograma() {
-        // Lógica para salir del programa
-        JOptionPane.showMessageDialog(null, "Saliendo de la aplicación. ¡Hasta luego!");
-        ventana.dispose(); // Cierra la ventana
-        // Aquí podrías agregar la lógica para guardar los datos antes de salir
+        ManejoArchivos.guardarDatos(this.registros, this.cuentas, this.categorias, this.configuracion);
+        JOptionPane.showMessageDialog(null, "Saliendo de la aplicación. ¡Hasta luego!", "Cerrando aplicación", JOptionPane.PLAIN_MESSAGE);
+        ventana.dispose();
     }
 
     public static void main(String[] args) {
