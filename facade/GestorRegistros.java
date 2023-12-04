@@ -1,10 +1,9 @@
 package facade;
 
 import java.awt.event.ActionListener;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 
 import javax.swing.*;
@@ -48,7 +47,7 @@ public class GestorRegistros {
     
     private String formatRegistroText(Registro registro) {
         return "<span style='font-family: Arial; font-size: 14pt; color: black;'>" + 
-                "Fecha: <span style='font-weight: 400;'>" + registro.getFecha() + "</span><br>" +
+                "Fecha: <span style='font-weight: 400;'>" + registro.obtenerFecha() + "</span><br>" +
                 "Descripción: <span style='font-weight: 400;'>" + registro.getDescripcion()+ "</span><br>" +
                 "Monto: <span style='font-weight: 400;'>$" + registro.getMonto() + "</span></span>";
     }
@@ -158,8 +157,8 @@ public class GestorRegistros {
             String fechaInput = dia + "/" + mes + "/" + anio;
 
             try {
-                SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-                Date fechaBusqueda = formatter.parse(fechaInput);
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                LocalDateTime fechaBusqueda = LocalDateTime.parse(fechaInput, formatter);
 
                 if (registros.isEmpty()) {
                     JLabel label = new JLabel("No hay registros aún.");
@@ -172,7 +171,7 @@ public class GestorRegistros {
                 boolean registrosEncontrados = false;
 
                 for (Registro registro : registros) {
-                    Date fechaRegistro = quitarTiempo(registro.getFecha());
+                    LocalDateTime fechaRegistro = quitarTiempo(registro.getFecha());
                     fechaBusqueda = quitarTiempo(fechaBusqueda);
                     if (fechaRegistro != null && fechaRegistro.compareTo(fechaBusqueda) == 0) {
                         panelRegistros.add(formatearRegistro(registro));
@@ -186,7 +185,7 @@ public class GestorRegistros {
                 }
                 panelRegistros.revalidate();
                 panelRegistros.repaint();
-            } catch (ParseException ex) {
+            } catch (DateTimeParseException ex) {
                 JLabel labelError = new JLabel("Formato de fecha incorrecto. Por favor, usa el formato DD/MM/AAAA.");
                 panelRegistros.add(labelError);
                 panelRegistros.revalidate();
@@ -207,17 +206,11 @@ public class GestorRegistros {
         panel.repaint();
     }
     
-    public Date quitarTiempo(Date fecha) {
+    public LocalDateTime quitarTiempo(LocalDateTime fecha) {
         if (fecha == null) {
             return null;
         }
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(fecha);
-        cal.set(Calendar.HOUR_OF_DAY, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
-        cal.set(Calendar.MILLISECOND, 0);
-        return cal.getTime();
+        return fecha.toLocalDate().atStartOfDay();
     }
     
     public void agregarRegistro() {
@@ -343,12 +336,12 @@ public class GestorRegistros {
             Cuenta cuentaSeleccionada = cuentas.isEmpty() ? null : cuentas.get(listaCuentas.getSelectedIndex());
     
             if (tipoRegistro.equals("Ingreso")) {
-                Ingreso ingreso = new Ingreso(new Date(), descripcion, monto, categoriaSeleccionada, cuentaSeleccionada);
+                Ingreso ingreso = new Ingreso(LocalDateTime.now(), descripcion, monto, categoriaSeleccionada, cuentaSeleccionada);
                 registros.add(ingreso);
                 cuentaSeleccionada.actualizarBalance(monto);
                 menuAVolver.actionPerformed(null);
             } else if (tipoRegistro.equals("Egreso")) {
-                Egreso egreso = new Egreso(new Date(), descripcion, monto, categoriaSeleccionada, cuentaSeleccionada);
+                Egreso egreso = new Egreso(LocalDateTime.now(), descripcion, monto, categoriaSeleccionada, cuentaSeleccionada);
                 registros.add(egreso);
                 cuentaSeleccionada.actualizarBalance(-monto);
                 menuAVolver.actionPerformed(null);
@@ -359,7 +352,7 @@ public class GestorRegistros {
                     double saldoOrigen = cuentaOrigen.getSaldo();
                     double montoTransferencia = Double.parseDouble(txtMonto.getText());
                     if (saldoOrigen >= montoTransferencia) {
-                        Transaccion transaccion = new Transaccion(new Date(), descripcion, montoTransferencia, cuentaOrigen, cuentaDestino);
+                        Transaccion transaccion = new Transaccion(LocalDateTime.now(), descripcion, montoTransferencia, cuentaOrigen, cuentaDestino);
                         registros.add(transaccion);
         
                         cuentaOrigen.actualizarBalance(-montoTransferencia);

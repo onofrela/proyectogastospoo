@@ -1,23 +1,38 @@
 package registros;
-import java.util.Date;
 import java.io.Serializable;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
+import java.time.LocalDateTime;
 
 public abstract class Registro implements Serializable {
-    private Date fecha;
+    private String patron;
+    private LocalDateTime fecha;
+    private String idioma;
+    private String pais;
     private String descripcion;
     private double monto;
 
-    public Registro(Date fecha, String descripcion, double monto) {
+
+    public Registro(LocalDateTime fecha, String descripcion, double monto) {
         this.fecha = fecha;
         this.descripcion = descripcion;
         this.monto = monto;
+        this.patron = "dd 'de' MMMM 'del' yyyy";
+        this.idioma = "es";
+        this.pais = "ES";
+
     }
 
-    public Date getFecha() {
+    public String obtenerFecha() {
+        DateTimeFormatter formato = DateTimeFormatter.ofPattern(patron, new Locale(idioma, pais));
+        return this.fecha.format(formato);
+    }
+
+    public LocalDateTime getFecha() {
         return fecha;
     }
 
-    public void setFecha(Date fecha) {
+    public void setFecha(LocalDateTime fecha) {
         this.fecha = fecha;
     }
 

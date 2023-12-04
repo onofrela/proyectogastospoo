@@ -1,14 +1,14 @@
 package registros;
-import java.util.Date;
 
 import cuentas.Cuenta;
 import categoria.Categoria;
+import java.time.LocalDateTime;
 
 public class Ingreso extends Registro {
     private Categoria categoria;
     private Cuenta cuentaAsociada;
 
-    public Ingreso(Date fecha, String descripcion, double monto, Categoria categoria, Cuenta cuentaAsociada) {
+    public Ingreso(LocalDateTime fecha, String descripcion, double monto, Categoria categoria, Cuenta cuentaAsociada) {
         super(fecha, descripcion, monto);
         this.categoria = categoria;
         this.cuentaAsociada = cuentaAsociada;
