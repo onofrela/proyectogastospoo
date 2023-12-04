@@ -4,19 +4,11 @@ import java.io.Serializable;
 
 public class Monto implements Serializable {
     private double monto;
-    private String simboloMoneda;
-    private String moneda;
+    private FormatoMonto formato;
 
-    public Monto(double monto) {
+    public Monto(double monto, FormatoMonto formato) {
         this.monto = monto;
-        this.simboloMoneda = "$";
-        this.moneda = "MXN";
-    }
-
-    public Monto(double monto, String simboloMoneda, String moneda) {
-        this.monto = monto;
-        this.simboloMoneda = simboloMoneda;
-        this.moneda = moneda;
+        this.formato = formato;
     }
 
     public double getMonto() {
@@ -27,24 +19,8 @@ public class Monto implements Serializable {
         this.monto = monto;
     }
 
-    public String getSimboloMoneda() {
-        return this.simboloMoneda;
-    }
-
-    public void setSimboloMoneda(String simboloMoneda) {
-        this.simboloMoneda = simboloMoneda;
-    }
-
-    public String getMoneda() {
-        return this.moneda;
-    }
-
-    public void setMoneda(String moneda) {
-        this.moneda = moneda;
-    }
-
     @Override
     public String toString() {
-        return simboloMoneda + String.format("%.2f", monto) + " " + moneda;
+        return formato.getSimboloMoneda() + String.format("%.2f", monto) + " " + formato.getMoneda();
     }
 }

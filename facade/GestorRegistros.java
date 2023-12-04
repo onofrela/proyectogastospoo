@@ -16,6 +16,7 @@ import registros.Ingreso;
 import registros.Registro;
 import registros.Transaccion;
 import facade.componentes.TopBar;
+import monto.FormatoMonto;
 
 public class GestorRegistros {
     private GestorCuentas gestorCuentas;
@@ -25,8 +26,9 @@ public class GestorRegistros {
     private List<Categoria> categorias;
     private JPanel panel;
     private ActionListener menuAVolver;
+    private FormatoMonto formatoMonto;
     
-    public GestorRegistros(GestorCategorias gestorCategorias, GestorCuentas gestorCuentas, List<Registro> registros, JPanel panel, ActionListener menuAVolver){
+    public GestorRegistros(GestorCategorias gestorCategorias, GestorCuentas gestorCuentas, List<Registro> registros, JPanel panel, ActionListener menuAVolver, FormatoMonto formatoMonto){
         this.gestorCuentas = gestorCuentas;
         this.gestorCategorias = gestorCategorias;
         this.panel = panel;
@@ -34,6 +36,7 @@ public class GestorRegistros {
         this.registros = registros;
         this.cuentas = this.gestorCuentas.getCuentas();
         this.categorias = this.gestorCategorias.getCategorias();
+        this.formatoMonto = formatoMonto;
     }
 
     private boolean existenRegistros() {
@@ -336,12 +339,12 @@ public class GestorRegistros {
             Cuenta cuentaSeleccionada = cuentas.isEmpty() ? null : cuentas.get(listaCuentas.getSelectedIndex());
     
             if (tipoRegistro.equals("Ingreso")) {
-                Ingreso ingreso = new Ingreso(LocalDateTime.now(), descripcion, monto, categoriaSeleccionada, cuentaSeleccionada);
+                Ingreso ingreso = new Ingreso(LocalDateTime.now(), descripcion, monto, this.formatoMonto, categoriaSeleccionada, cuentaSeleccionada);
                 registros.add(ingreso);
                 cuentaSeleccionada.actualizarBalance(monto);
                 menuAVolver.actionPerformed(null);
             } else if (tipoRegistro.equals("Egreso")) {
-                Egreso egreso = new Egreso(LocalDateTime.now(), descripcion, monto, categoriaSeleccionada, cuentaSeleccionada);
+                Egreso egreso = new Egreso(LocalDateTime.now(), descripcion, monto, this.formatoMonto, categoriaSeleccionada, cuentaSeleccionada);
                 registros.add(egreso);
                 cuentaSeleccionada.actualizarBalance(-monto);
                 menuAVolver.actionPerformed(null);
@@ -352,7 +355,7 @@ public class GestorRegistros {
                     double saldoOrigen = cuentaOrigen.getSaldo();
                     double montoTransferencia = Double.parseDouble(txtMonto.getText());
                     if (saldoOrigen >= montoTransferencia) {
-                        Transaccion transaccion = new Transaccion(LocalDateTime.now(), descripcion, montoTransferencia, cuentaOrigen, cuentaDestino);
+                        Transaccion transaccion = new Transaccion(LocalDateTime.now(), descripcion, montoTransferencia, this.formatoMonto, cuentaOrigen, cuentaDestino);
                         registros.add(transaccion);
         
                         cuentaOrigen.actualizarBalance(-montoTransferencia);

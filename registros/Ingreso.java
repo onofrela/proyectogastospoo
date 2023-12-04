@@ -1,6 +1,7 @@
 package registros;
 
 import cuentas.Cuenta;
+import monto.FormatoMonto;
 import categoria.Categoria;
 import java.time.LocalDateTime;
 
@@ -8,8 +9,8 @@ public class Ingreso extends Registro {
     private Categoria categoria;
     private Cuenta cuentaAsociada;
 
-    public Ingreso(LocalDateTime fecha, String descripcion, double monto, Categoria categoria, Cuenta cuentaAsociada) {
-        super(fecha, descripcion, monto);
+    public Ingreso(LocalDateTime fecha, String descripcion, double monto, FormatoMonto formatoMonto, Categoria categoria, Cuenta cuentaAsociada) {
+        super(fecha, descripcion, monto, formatoMonto);
         this.categoria = categoria;
         this.cuentaAsociada = cuentaAsociada;
     }

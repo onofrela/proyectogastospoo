@@ -1,6 +1,7 @@
 package cuentas;
 import java.io.Serializable;
 
+import monto.FormatoMonto;
 import monto.Monto;
 
 public class Cuenta implements Serializable {
@@ -8,9 +9,9 @@ public class Cuenta implements Serializable {
     private Monto saldo;
 
     // Constructor
-    public Cuenta(String nombre, double saldo) {
+    public Cuenta(String nombre, double saldo, FormatoMonto formatoMonto) {
         this.nombre = nombre;
-        this.saldo = new Monto(saldo);
+        this.saldo = new Monto(saldo, formatoMonto);
     }
 
     public String getNombre() {

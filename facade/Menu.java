@@ -12,6 +12,7 @@ import cuentas.Cuenta;
 import datos.ManejoArchivos;
 import registros.Registro;
 import facade.componentes.TopBar;
+import monto.FormatoMonto;
 
 public class Menu {
     public JLabel lblBalance;
@@ -25,6 +26,10 @@ public class Menu {
     private static GestorCuentas gestorCuentas;
     private static GestorCategorias gestorCategorias;
     private static GestorRegistros gestorRegistros;
+    private static GestorFechas gestorFechas;
+    private static GestorMonedas gestorMonedas;
+
+    private FormatoMonto formatoMonto;
 
     private Balance balance;
 
@@ -32,15 +37,17 @@ public class Menu {
         this.ventana = ventana;
         this.panel = panel;
         this.balance = new Balance(cuentas);
+        this.formatoMonto = new FormatoMonto("$", "MXN");
 
         ManejoArchivos.cargarDatos(registros, cuentas, categorias);
         
-        gestorCuentas = new GestorCuentas(cuentas, e -> mostrarMenuCuentas(), panel);
+        gestorCuentas = new GestorCuentas(cuentas, e -> mostrarMenuCuentas(), panel, this.formatoMonto);
         gestorCategorias = new GestorCategorias(categorias, e -> mostrarMenuCategorias(), panel);
-        gestorRegistros = new GestorRegistros(gestorCategorias, gestorCuentas, registros, panel, e -> mostrarMenuRegistros());
+        gestorRegistros = new GestorRegistros(gestorCategorias, gestorCuentas, registros, panel, e -> mostrarMenuRegistros(), this.formatoMonto);
+        gestorMonedas = new GestorMonedas(formatoMonto, panel, e -> mostrarMenuConfiguracion());
     }
 
-public JButton generarBoton(String texto, ActionListener listener, JPanel panel) {
+    public JButton generarBoton(String texto, ActionListener listener, JPanel panel) {
         JButton boton = new JButton(texto);
         boton.addActionListener(listener);
         boton.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -160,8 +167,8 @@ public JButton generarBoton(String texto, ActionListener listener, JPanel panel)
         JPanel pnlBotones = new JPanel();
         pnlBotones.setLayout(new GridLayout(0, 2, 50, 50));
     
-        generarBoton("Configurar Moneda Predeterminada", e -> configurarMoneda(), pnlBotones);
-        generarBoton("Configurar Formato de Fecha", e -> configurarFormatoFecha(), pnlBotones);
+        generarBoton("Configurar Moneda Predeterminada", e -> gestorMonedas.configurarMoneda(), pnlBotones);
+        generarBoton("Configurar Formato de Fecha", e -> gestorFechas.configurarFormatoFecha(), pnlBotones);
     
         panel.add(pnlBotones, BorderLayout.CENTER);
         panel.revalidate();
@@ -172,13 +179,6 @@ public JButton generarBoton(String texto, ActionListener listener, JPanel panel)
         // Lógica para generar reportes
     }
 
-    private void configurarMoneda() {
-        // Lógica para configurar la moneda
-    }
-
-    private void configurarFormatoFecha() {
-        // Lógica para configurar el formato de la fecha
-    }
 
     private void salirDelPrograma() {
         ManejoArchivos.guardarDatos(registros, cuentas, categorias);

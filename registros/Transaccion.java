@@ -2,13 +2,14 @@ package registros;
 import java.time.LocalDateTime;
 
 import cuentas.Cuenta;
+import monto.FormatoMonto;
 
 public class Transaccion extends Registro {
     private Cuenta cuentaOrigen;
     private Cuenta cuentaDestino;
 
-    public Transaccion(LocalDateTime fecha, String descripcion, double monto, Cuenta cuentaOrigen, Cuenta cuentaDestino) {
-        super(fecha, descripcion, monto);
+    public Transaccion(LocalDateTime fecha, String descripcion, double monto, FormatoMonto formatoMonto, Cuenta cuentaOrigen, Cuenta cuentaDestino) {
+        super(fecha, descripcion, monto, formatoMonto);
         this.cuentaOrigen = cuentaOrigen;
         this.cuentaDestino = cuentaDestino;
     }
