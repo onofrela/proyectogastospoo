@@ -159,7 +159,8 @@ public class GestorCuentas {
     
         JLabel lblNombreCuenta = new JLabel("Nombre de la cuenta:");
         JLabel lblSaldo = new JLabel("Saldo:");
-    
+        lblNombreCuenta.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+        lblSaldo.setFont(new Font("Segoe UI", Font.PLAIN, 16));
         JTextField txtNombreCuenta = new JTextField(cuentaSeleccionada.getNombre());
         JTextField txtSaldo = new JTextField(String.valueOf(cuentaSeleccionada.getSaldo()));
     
