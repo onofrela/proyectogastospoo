@@ -168,10 +168,8 @@ public class GestorRegistros {
 
             try {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy").withLocale(Locale.forLanguageTag("es-ES"));
-                System.out.println(fechaInput);
                 LocalDate fechaParseada = LocalDate.parse(fechaInput, formatter);
                 LocalDateTime fechaBusqueda = fechaParseada.atStartOfDay();
-                System.out.println(fechaBusqueda.toString());
 
                 if (registros.isEmpty()) {
                     JLabel label = new JLabel("No hay registros aún.");
