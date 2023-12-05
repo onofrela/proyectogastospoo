@@ -1,10 +1,12 @@
 package facade;
 
 import java.awt.event.ActionListener;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
+import java.util.Locale;
 
 import javax.swing.*;
 import java.awt.*;
@@ -158,11 +160,18 @@ public class GestorRegistros {
             String mes = txtMes.getText();
             String anio = txtAnio.getText();
 
+            if(dia.length() == 1){
+                dia = '0' + dia;
+            }
+
             String fechaInput = dia + "/" + mes + "/" + anio;
 
             try {
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-                LocalDateTime fechaBusqueda = LocalDateTime.parse(fechaInput, formatter);
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy").withLocale(Locale.forLanguageTag("es-ES"));
+                System.out.println(fechaInput);
+                LocalDate fechaParseada = LocalDate.parse(fechaInput, formatter);
+                LocalDateTime fechaBusqueda = fechaParseada.atStartOfDay();
+                System.out.println(fechaBusqueda.toString());
 
                 if (registros.isEmpty()) {
                     JLabel label = new JLabel("No hay registros aún.");
